@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import designSystemStyles from '../assets/styles'
-import { PrimaryButton } from '../components'
+import { GhostButton, PrimaryButton } from '../components'
 
 const Quizzes = ({ navigation }) => {
   return (
@@ -11,13 +11,15 @@ const Quizzes = ({ navigation }) => {
         <View style={{gap: 10, alignItems: 'center'}}>
           <Image source={require('../assets/images/desert_landscape.png')} style={{width: 300, height: 230}}/>
           <Text style={designSystemStyles.subHeading}>
-            No quizzes around here yet...
+            Need to study quickly for a test?
           </Text>
           <Text style={designSystemStyles.subHeading}>
-            Start by creating your first quiz!
+            Create or open a quiz!
           </Text>
         </View>
         <PrimaryButton title='+ Create quiz' onPress={() => navigation.navigate('QuizCreation')}/>
+        <GhostButton title='Open from device'/>
+        <Text style={[designSystemStyles.bodyText, {color: '#666'}]}>Cloud storage coming soon!</Text>
       </View>
     </View>
   )

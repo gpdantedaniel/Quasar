@@ -11,7 +11,7 @@ const defaultScreenOptions = {headerShown: false,  animation: 'none'};
 
 const QuizStack = () => {
   return (
-    <Stack.Navigator initialRouteName='EditQuiz'>
+    <Stack.Navigator initialRouteName='Quizzes'>
       <Stack.Screen name='Quizzes' component={QuizzesScreen} options={defaultScreenOptions}/>
       <Stack.Screen name='QuizCreation' component={QuizCreationScreen} options={defaultScreenOptions}/>
       <Stack.Screen name='EditQuiz' component={EditQuizScreen} options={defaultScreenOptions}/>
