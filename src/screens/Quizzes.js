@@ -11,15 +11,13 @@ const Quizzes = ({ navigation }) => {
         <View style={{gap: 10, alignItems: 'center'}}>
           <Image source={require('../assets/images/desert_landscape.png')} style={{width: 300, height: 230}}/>
           <Text style={designSystemStyles.subHeading}>
-            Need to study quickly for a test?
+            No quizzes around here yet...
           </Text>
           <Text style={designSystemStyles.subHeading}>
-            Create or open a quiz!
+            Start by creating your first quiz!
           </Text>
         </View>
         <PrimaryButton title='+ Create quiz' onPress={() => navigation.navigate('QuizCreation')}/>
-        <GhostButton title='Open from device'/>
-        <Text style={[designSystemStyles.bodyText, {color: '#666'}]}>Cloud storage coming soon!</Text>
       </View>
     </View>
   )
