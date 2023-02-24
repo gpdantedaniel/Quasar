@@ -1,15 +1,46 @@
 import { StyleSheet, Text, View, Pressable} from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { createVerticalNavigator } from '../../components'
 import AccountScreen from '../Account';
 import QuizStack from './QuizStack';
+import { getAuth } from 'firebase/auth';
+
+import { collection, doc, getDoc, getDocs, getFirestore } from 'firebase/firestore';
+
+import { loadUser } from '../../redux/userSlice';
+import { useDispatch } from 'react-redux';
 
 const Vertical = createVerticalNavigator();
 
 const MainStack = () => {
+  const auth = getAuth();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+
+    const userDocRef = doc(getFirestore(), 'users', auth.currentUser.uid);
+    getDoc(userDocRef).then((result) => { 
+      if (result) {
+        const data = result.data();
+        // Convert Firestore Timestamp to primitive
+        data.creation = data.creation.toDate().toString();
+        dispatch(loadUser(data));
+      }
+    });
+
+    const quizzesColRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
+    getDocs(quizzesColRef).then((docs) => {
+      docs.forEach((doc) => {
+        const data = doc.data()
+        console.log('doc.data: ', data);
+      })
+    });
+
+  })
+
   return (
     <Vertical.Navigator>
       <Vertical.Screen name="QuizStack" component={QuizStack} options={{

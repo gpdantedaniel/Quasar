@@ -5,17 +5,22 @@ import designSystemStyles from '../assets/styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getAuth, signOut } from 'firebase/auth';
 
+import { useDispatch } from 'react-redux';
+import { clearUser } from '../redux/userSlice';
+
 function VerticalNavigator({initialRouteName, children, screenOptions, tabBarStyle, contentStyle}) {
   const { state, navigation, descriptors, NavigationContent } = useNavigationBuilder(TabRouter, {
     children,
     screenOptions,
     initialRouteName,
   });
+
+  const dispatch = useDispatch();
   
   const onSignout = () => {
     const auth = getAuth();
     signOut(auth).then(() => {
-      console.log("Signed out!");
+      dispatch(clearUser());
     }).catch((error) => {
       console.log(error);
     });

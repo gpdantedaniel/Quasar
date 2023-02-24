@@ -23,7 +23,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 import { store } from './src/redux/store';
 import { Provider } from 'react-redux';
-
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -45,8 +45,6 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const functions = getFunctions(app);
 connectFunctionsEmulator(functions, 'localhost', 5001);
-
-
 
 const Stack = createNativeStackNavigator();
 const defaultScreenOptions = {headerShown: false,  animation: 'none'};

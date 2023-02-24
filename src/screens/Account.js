@@ -3,20 +3,30 @@ import React from 'react'
 import designSystemStyles from '../assets/styles'
 import { GhostButton } from '../components'
 
+import { useSelector } from 'react-redux'
+import { selectUserState } from '../redux/userSlice'
+
 const Account = () => {
-  return (
-    <View style={styles.container}>
-      <Text style={{...designSystemStyles.heading, fontFamily: 'Inter-Bold',}}>My Account</Text> 
-      <View style={{gap: 10,}}>
-        <Text style={designSystemStyles.bodyText}>First name: Dante Daniel</Text>
-        <Text style={designSystemStyles.bodyText}>Last name: Garcia Perez</Text>
-        <Text style={designSystemStyles.bodyText}>Email: gp.dantedaniel@gmail.com</Text>
+  const user = useSelector((state) => state.user);
+  console.log('user: ', user);
+
+  if (user) {
+    return (
+      <View style={styles.container}>
+        <Text style={{...designSystemStyles.heading, fontFamily: 'Inter-Bold',}}>My Account</Text> 
+        <View style={{gap: 10,}}>
+          <Text style={designSystemStyles.bodyText}>First name: {user.firstName}</Text>
+          <Text style={designSystemStyles.bodyText}>Last name: {user.lastName}</Text>
+          <Text style={designSystemStyles.bodyText}>Email: {user.email}</Text>
+        </View>
+        <GhostButton title='Change Password'/>
+        <GhostButton title='Delete Account'/>
       </View>
-      <GhostButton title='Change Password'/>
-      <GhostButton title='Delete Account'/>
-    </View>
-  )
+    )
+  }
 }
+
+ 
 
 export default Account
 
