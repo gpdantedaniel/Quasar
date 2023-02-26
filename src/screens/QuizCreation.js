@@ -9,6 +9,8 @@ import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addQuestions } from '../redux/quizSlice'
+import { addDoc, collection, getFirestore, Timestamp } from 'firebase/firestore'
+import { getAuth } from 'firebase/auth'
 
 // const functions = getFunctions(getApp());
 // connectFunctionsEmulator(functions, "localhost", 5001);
@@ -26,11 +28,37 @@ const QuizCreation = ({ navigation }) => {
     const generateQuiz = httpsCallable(functions, 'generateQuiz');
     
     generateQuiz({baseText: baseText}).then((result) => {
-      const data = result.data;
-      dispatch(addQuestions(data));
+      const questions = result.data;
+      const auth = getAuth();
 
-      console.log(data);
-      navigation.navigate('EditQuiz');
+      const quiz = {
+        name: "New Quiz",
+        topic: "Topic Name",
+        description: "A quiz about something!",
+        lastTaken: Timestamp.now(),
+        creation: Timestamp.now(),
+        lastQuestionIndex: 0,
+        points: 0,
+      };
+
+      
+      const quizzesColRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
+
+      addDoc(quizzesColRef, quiz).then(({ docId }) => {
+
+        const questionsColRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', docId, 'questions');
+
+        questions.forEach((question) => {
+          addDoc(questionsColRef, question);
+        })
+
+      })
+
+    
+
+      // navigation.navigate('EditQuiz');
+            // dispatch(addQuestions(data));
+
 
     }).catch((error) => {
       console.log(error);

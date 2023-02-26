@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  filename: null,
+  docId: null,
   name: null,
   topic: null,
   description: null,
-  questions: [],
+  lastTaken: null,
+  creation: null,
   lastQuestionIndex: null,
   points: null,
 }
@@ -14,16 +15,22 @@ export const quizSlice = createSlice({
   name: 'quiz',
   initialState,
   reducers: {
-    // Load a locally imported quiz
-    loadQuiz: () => {},
-    // Clear the currently stored quiz
-    clearQuiz: () => {},
+    // Load a selected quiz
+    loadQuiz: (state, action) => {
+      state = Object.assign(state, action.payload);
+    },
+ 
     // Update name, topic, and description
     updateDescriptors: () => {},
     // Update lastQuestionIndex and points
     updateProgressIdentifiers: () => {},
     // Add questions to the quiz
     addQuestions: (state, action) => { state.questions = [...state.questions, action.payload] },
+
+    // Clear the currently stored quiz
+    clearQuiz: (state) => {
+      state = initialState
+    },
 
   } 
 })
@@ -33,7 +40,8 @@ export const {
   updateName, 
   updateTopic, 
   updateDescription, 
-  addQuestions
+  addQuestions,
+  clearQuiz
 } = quizSlice.actions;
 
 export default quizSlice.reducer;

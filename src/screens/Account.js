@@ -8,7 +8,6 @@ import { selectUserState } from '../redux/userSlice'
 
 const Account = () => {
   const user = useSelector((state) => state.user);
-  console.log('user: ', user);
 
   if (user) {
     return (

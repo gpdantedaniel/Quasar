@@ -12,6 +12,7 @@ import { collection, doc, getDoc, getDocs, getFirestore } from 'firebase/firesto
 
 import { loadUser } from '../../redux/userSlice';
 import { useDispatch } from 'react-redux';
+import { addQuiz } from '../../redux/quizzesSlice';
 
 const Vertical = createVerticalNavigator();
 
@@ -20,24 +21,36 @@ const MainStack = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
     const userDocRef = doc(getFirestore(), 'users', auth.currentUser.uid);
     getDoc(userDocRef).then((result) => { 
       if (result) {
         const data = result.data();
         // Convert Firestore Timestamp to primitive
         data.creation = data.creation.toDate().toString();
+        // Add the document's id to the data
+        data['docId'] = result.id;
         dispatch(loadUser(data));
       }
     });
 
+    /*
     const quizzesColRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
     getDocs(quizzesColRef).then((docs) => {
       docs.forEach((doc) => {
+        console.log('doc.id: ', doc.id);
         const data = doc.data()
+        // Convert Firestore Timestamps to strings
+        data.creation = data.creation.toDate().toString();
+        data.lastTaken = data.lastTaken.toDate().toString();
+        data['docId'] = doc.id;
+
+
+        dispatch(addQuiz(data))
+
         console.log('doc.data: ', data);
       })
     });
+    */
 
   })
 

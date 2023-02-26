@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  docId: null,
   firstName: null,
   lastName: null,
   email: null,
@@ -13,10 +14,7 @@ export const userSlice = createSlice({
   reducers: {
     // Load user information
     loadUser: (state, { payload }) => {
-      state.firstName = payload.firstName;
-      state.lastName = payload.lastName;
-      state.email = payload.email;
-      state.creation = payload.creation;
+      state = Object.assign(state, payload)
     },
 
     clearUser: (state) => {

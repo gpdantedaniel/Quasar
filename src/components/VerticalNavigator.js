@@ -7,6 +7,7 @@ import { getAuth, signOut } from 'firebase/auth';
 
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../redux/userSlice';
+import { clearQuiz } from '../redux/quizSlice';
 
 function VerticalNavigator({initialRouteName, children, screenOptions, tabBarStyle, contentStyle}) {
   const { state, navigation, descriptors, NavigationContent } = useNavigationBuilder(TabRouter, {
@@ -21,6 +22,7 @@ function VerticalNavigator({initialRouteName, children, screenOptions, tabBarSty
     const auth = getAuth();
     signOut(auth).then(() => {
       dispatch(clearUser());
+      dispatch(clearQuiz());
     }).catch((error) => {
       console.log(error);
     });
