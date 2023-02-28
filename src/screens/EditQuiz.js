@@ -4,30 +4,31 @@ import designSystemStyles from '../assets/styles'
 import { GhostButton, PrimaryButton } from '../components'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { getAuth } from 'firebase/auth'
-import { addDoc, collection, getDocs, getFirestore } from 'firebase/firestore'
-import { useSelector } from 'react-redux'
+import { addDoc, collection, doc, getDocs, getFirestore, setDoc, updateDoc } from 'firebase/firestore'
+import { useDispatch, useSelector } from 'react-redux'
+import { addQuestion, updateQuestion } from '../redux/questionsSlice'
 
 
-const QuestionItem = ({ questionObject, quiz }) => {
-  const [questionId, setQuestionId] = useState(questionObject.id || '')
-  const [question, setQuestion] = useState(questionObject.question || '');
-  const [answer, setAnswer] = useState(questionObject.answer || '');
-  const [options, setOptions] = useState(questionObject.options.concat(';') ||'');
+const QuestionView = ({ questionObject, user, quiz, dispatch }) => {
+  const [question, setQuestion] = useState(questionObject.question);
+  const [answer, setAnswer] = useState(questionObject.answer);
+  const [options, setOptions] = useState(questionObject.options.join(';'));
 
-  console.log('questionitem question: ', questionObject);
+  console.log('questionObject: ', questionObject);
 
-  const onSave = async () => {
-    const auth = getAuth();
-    const questionsRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId, 'questions');
-
-    const newQuestion = {
+  const onSave = () => {
+    const data = {
       question, 
       answer, 
       options: options.split(';')
     };
+    
+    if (questionObject.docId) {
+      console.log('dispatching...');
+      dispatch(updateQuestion({user, quiz, docId: questionObject.docId, data}));
+    }
 
-    const docRef = await addDoc(questionsRef, newQuestion);
-    console.log('docRef: ', docRef);
+    console.log('data: ', data);
   }
 
   return (
@@ -37,18 +38,17 @@ const QuestionItem = ({ questionObject, quiz }) => {
 
           <View style={{flexDirection: 'row', gap: 20}}>
             <View>
-              <Text style={[designSystemStyles.bodyText, {fontSize: 14, color: '#7c7c7c'}]}>Question</Text>
+              <Text style={designSystemStyles.bodyTextSmall}>Question</Text>
               <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={question} onChangeText={(question) => setQuestion(question)}/>
 
             </View>
             <View>
-              <Text style={[designSystemStyles.bodyText, {fontSize: 14, color: '#7c7c7c'}]}>Answer</Text>
+              <Text style={designSystemStyles.bodyTextSmall}>Answer</Text>
               <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={answer} onChangeText={(answer) => setAnswer(answer)}/>
-
             </View>
           </View>
           <View>
-            <Text style={[designSystemStyles.bodyText, {fontSize: 14, color: '#7c7c7c'}]}>False options (Separate options using a semicolon “;”)</Text>
+            <Text style={designSystemStyles.bodyTextSmall}>False options (Separate options using a semicolon “;”)</Text>
             <TextInput style={[designSystemStyles.GhostTextInput, {width: '100%',}]} value={options} onChangeText={(options) => setOptions(options)}/>
           </View>
 
@@ -56,7 +56,6 @@ const QuestionItem = ({ questionObject, quiz }) => {
         <View style={{justifyContent: 'space-between', alignItems: 'flex-end', width: 150,}}>
           <Icon name={'trash-outline'} size={30} color={'black'}/>
           <GhostButton title='Save' style={{width: 150}} onPress={() => onSave()}/>
-
         </View>
       </View>
     </View>
@@ -65,16 +64,15 @@ const QuestionItem = ({ questionObject, quiz }) => {
 
 
 const EditQuiz = ({ navigation }) => {
+  const user = useSelector((state) => state.user);
   const quiz = useSelector((state) => state.quiz);
   const questions = useSelector((state) => state.questions.questions);
-  console.log('quiz: ', quiz);
-  console.log('questions: ', questions);
-  
+  const dispatch = useDispatch();
 
   const [name, setName] = useState(quiz.name);
   const [topic, setTopic] = useState(quiz.topic);
   const [description, setDescription] = useState(quiz.description);  
-    
+
   return (
     <View style={styles.container}>
       <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>Edit Quiz</Text>
@@ -83,18 +81,17 @@ const EditQuiz = ({ navigation }) => {
         <View style={{gap: 20}}>
           <View style={{flexDirection: 'row', gap: 20}}>
             <View>
-              <Text style={[designSystemStyles.bodyText, {fontSize: 14, color: '#7c7c7c'}]}>Quiz name</Text>
+              <Text style={designSystemStyles.bodyTextSmall}>Quiz name</Text>
               <TextInput style={designSystemStyles.GhostTextInput} value={name} onChangeText={(name) => setName(name)}/>
 
             </View>
             <View>
-              <Text style={[designSystemStyles.bodyText, {fontSize: 14, color: '#7c7c7c'}]}>Topic</Text>
+              <Text style={designSystemStyles.bodyTextSmall}>Topic</Text>
               <TextInput style={designSystemStyles.GhostTextInput} value={topic} onChangeText={(topic) => setTopic(topic)}/>
-
             </View>
           </View>
           <View>
-            <Text style={[designSystemStyles.bodyText, {fontSize: 14, color: '#7c7c7c'}]}>Description</Text>
+            <Text style={designSystemStyles.bodyTextSmall}>Description</Text>
             <TextInput style={[designSystemStyles.GhostTextInput, {width: 620,}]} value={description} onChangeText={(description) => setDescription(description)}/>
           </View>
         </View>
@@ -102,16 +99,15 @@ const EditQuiz = ({ navigation }) => {
       <View style={{flex: 1, gap: 20}}>
         <View style={{flexDirection: 'row', gap: 20, alignItems: 'center'}}>
           <Text style={designSystemStyles.heading}>Questions</Text>
-          <GhostButton title='+ Add Question' style={{width: 200,}}/>
+          <GhostButton title='+ Add Question' style={{width: 200}} onPress={() => onAddQuestion()}/>
         </View>
 
         <FlatList
           data={questions}
-          renderItem={({item}) => <QuestionItem questionObject={item} quiz={quiz}/> }
+          renderItem={({item}) => <QuestionView questionObject={item} user={user} quiz={quiz} dispatch={dispatch}/> }
           style={{paddingTop: -10, paddingBottom: -10}}
         />
 
-      
       </View>
 
       <View style={{flexDirection: 'row', gap: 24}}>
