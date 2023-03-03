@@ -73,6 +73,15 @@ const EditQuiz = ({ navigation }) => {
   const [topic, setTopic] = useState(quiz.topic);
   const [description, setDescription] = useState(quiz.description);  
 
+  const onAddQuestion = () => {
+    console.log('addQuestion: ', question);
+    dispatch(addQuestion({user, quiz, data: {
+      question: "New question",
+      answer: "answer",
+      options: ["option1", "option2", "option3", "option4"]
+    }}))
+  }
+
   return (
     <View style={styles.container}>
       <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>Edit Quiz</Text>
