@@ -25,7 +25,6 @@ const updateQuestion = createAsyncThunk(
       const docRef = doc(getFirestore(), 'users', user.docId, 'quizzes', quiz.docId, 'questions', docId);
       await updateDoc(docRef, data);
       return { docId, data }
-
     } catch(error) {
       console.log(error)
     }
@@ -51,8 +50,16 @@ export const questionsSlice = createSlice({
     })
 
     builder.addCase(updateQuestion.fulfilled, (state, action) => {
-      const questions = state.questions;
-      console.log('questions: ', questions);
+      const index = state.questions.findIndex(question => question.docId === action.payload.docId);
+      console.log('index: ', index);
+      // If the question exists (outputs -1 when not found)
+      if (index >= 0) { 
+        console.log('update question!');
+        state.questions[index] = Object.assign(state.questions[index], action.payload.data);
+        // state.questions[index].question = action.payload.data.question;
+        // state.questions[index].answer = action.payload.data.answer;
+        // state.questions[index].options = action.payload.data.options;
+      }
     })
   }
 })

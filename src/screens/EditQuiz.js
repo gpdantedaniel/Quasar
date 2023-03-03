@@ -9,26 +9,25 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addQuestion, updateQuestion } from '../redux/questionsSlice'
 
 
-const QuestionView = ({ questionObject, user, quiz, dispatch }) => {
-  const [question, setQuestion] = useState(questionObject.question);
-  const [answer, setAnswer] = useState(questionObject.answer);
-  const [options, setOptions] = useState(questionObject.options.join(';'));
+const QuestionView = ({ data, user, quiz, dispatch }) => {
+  const [question, setQuestion] = useState(data.question);
+  const [answer, setAnswer] = useState(data.answer);
+  const [options, setOptions] = useState(data.options.join(';'));
 
-  console.log('questionObject: ', questionObject);
+  console.log('question data: ', data);
 
   const onSave = () => {
-    const data = {
+    // The data that will be updated
+    const updateData = {
       question, 
       answer, 
       options: options.split(';')
     };
     
-    if (questionObject.docId) {
+    if (data.docId) {
       console.log('dispatching...');
-      dispatch(updateQuestion({user, quiz, docId: questionObject.docId, data}));
+      dispatch(updateQuestion({user, quiz, docId: data.docId, data: updateData}));
     }
-
-    console.log('data: ', data);
   }
 
   return (
@@ -67,6 +66,7 @@ const EditQuiz = ({ navigation }) => {
   const user = useSelector((state) => state.user);
   const quiz = useSelector((state) => state.quiz);
   const questions = useSelector((state) => state.questions.questions);
+
   const dispatch = useDispatch();
 
   const [name, setName] = useState(quiz.name);
@@ -92,7 +92,7 @@ const EditQuiz = ({ navigation }) => {
           </View>
           <View>
             <Text style={designSystemStyles.bodyTextSmall}>Description</Text>
-            <TextInput style={[designSystemStyles.GhostTextInput, {width: 620,}]} value={description} onChangeText={(description) => setDescription(description)}/>
+            <TextInput style={[designSystemStyles.GhostTextInput, {width: 620}]} value={description} onChangeText={(description) => setDescription(description)}/>
           </View>
         </View>
       </View>      
@@ -104,7 +104,7 @@ const EditQuiz = ({ navigation }) => {
 
         <FlatList
           data={questions}
-          renderItem={({item}) => <QuestionView questionObject={item} user={user} quiz={quiz} dispatch={dispatch}/> }
+          renderItem={({item}) => <QuestionView data={item} user={user} quiz={quiz} dispatch={dispatch}/> }
           style={{paddingTop: -10, paddingBottom: -10}}
         />
 
