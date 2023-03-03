@@ -2,10 +2,19 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import designSystemStyles from '../assets/styles'
 import { GhostButton } from '../components'
+import { useSelector } from 'react-redux'
 
 const Quiz = ({ route, navigation }) => {
 
-  const quiz = route.params.quiz;
+  const user = useSelector((state) => state.user)
+  const quiz = useSelector((state) => state.quiz);
+  const questions = useSelector((state) => state.questions.questions);
+  
+  const progress = Number((quiz.lastQuestionIndex + 1)/questions.length*100).toPrecision(3);
+
+  console.log('user: ', user);
+  console.log('quiz: ', quiz);
+  console.log('questions: ', questions);
   
   return (
     <View style={designSystemStyles.container}>
@@ -15,10 +24,10 @@ const Quiz = ({ route, navigation }) => {
       </View>
       <View style={{gap: 10}}>
         <Text style={designSystemStyles.bodyText}>
-          Progress: 20 questions out of 25 answered
+          Progress: {(quiz.lastQuestionIndex + 1)} out of {questions.length} questions
         </Text>
         <View style={designSystemStyles.progressBar}>
-          <View style={[ designSystemStyles.progressFill, {width: '50%'}]}/>
+          <View style={[ designSystemStyles.progressFill, {width: `${progress}%`}]}/>
         </View>
       </View>
       <View style={designSystemStyles.separator}/>
