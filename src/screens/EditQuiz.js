@@ -74,7 +74,6 @@ const EditQuiz = ({ navigation }) => {
   const [description, setDescription] = useState(quiz.description);  
 
   const onAddQuestion = () => {
-    console.log('addQuestion: ', question);
     dispatch(addQuestion({user, quiz, data: {
       question: "New question",
       answer: "answer",
@@ -114,7 +113,7 @@ const EditQuiz = ({ navigation }) => {
         <FlatList
           data={questions}
           renderItem={({item}) => <QuestionView data={item} user={user} quiz={quiz} dispatch={dispatch}/> }
-          style={{paddingTop: -10, paddingBottom: -10}}
+          style={{paddingTop: -10, paddingBottom: -10, paddingRight: 20}}
         />
 
       </View>
@@ -141,5 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f7f7f7',
     borderRadius: 10,
     padding: 20,
+    marginTop: 10,
+    marginBottom: 10,
   },
 })

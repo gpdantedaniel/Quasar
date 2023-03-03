@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, doc, getDocs, getFirestore, updateDoc } from "firebase/firestore";
+import { collection, doc, getDocs, getFirestore, updateDoc, addDoc } from "firebase/firestore";
 
 // AsyncThunk functions
 const getQuestions = createAsyncThunk(
