@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react'
 import designSystemStyles from '../assets/styles'
 import { GhostButton, PrimaryButton } from '../components'
 import { getAuth } from 'firebase/auth'
-import { collection, doc, getDocs, getFirestore } from 'firebase/firestore'
+import { collection, doc, getDocs, getFirestore, orderBy, query } from 'firebase/firestore'
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useSelector, useDispatch } from 'react-redux'
-import { loadQuiz } from '../redux/quizSlice'
+import { loadQuiz, updateLastTaken } from '../redux/quizSlice'
 import { getQuestions } from '../redux/questionsSlice'
 
 const Quizzes = ({ navigation }) => {
@@ -20,14 +20,16 @@ const Quizzes = ({ navigation }) => {
 
     dispatch(loadQuiz(quiz));
     dispatch(getQuestions({user, quiz}));
+
     navigation.navigate('QuizPreview');
   }
 
   const getQuizzes = async() => {
     const auth = getAuth();
     const quizzesRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
+    const q = query(quizzesRef, orderBy('lastTaken', 'desc'));
 
-    const querySnapshot = await getDocs(quizzesRef);
+    const querySnapshot = await getDocs(q);
     const docs = querySnapshot.docs;
 
     // Get all the quiz data, the document's id and change the Firestore Timestamps to Strings

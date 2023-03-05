@@ -13,6 +13,7 @@ const QuestionView = ({ data, user, quiz, dispatch }) => {
   const [question, setQuestion] = useState(data.question);
   const [answer, setAnswer] = useState(data.answer);
   const [options, setOptions] = useState(data.options.join(';'));
+  const [modified, setModified] = useState(false);
 
   console.log('question data: ', data);
 
@@ -38,23 +39,34 @@ const QuestionView = ({ data, user, quiz, dispatch }) => {
           <View style={{flexDirection: 'row', gap: 20}}>
             <View>
               <Text style={designSystemStyles.bodyTextSmall}>Question</Text>
-              <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={question} onChangeText={(question) => setQuestion(question)}/>
+              <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={question} onChangeText={(question) => {
+                setQuestion(question); setModified(true);
+              }}/>
 
             </View>
             <View>
               <Text style={designSystemStyles.bodyTextSmall}>Answer</Text>
-              <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={answer} onChangeText={(answer) => setAnswer(answer)}/>
+              <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={answer} onChangeText={(answer) => {
+                setAnswer(answer); setModified(true);
+              }}/>
             </View>
           </View>
           <View>
             <Text style={designSystemStyles.bodyTextSmall}>False options (Separate options using a semicolon “;”)</Text>
-            <TextInput style={[designSystemStyles.GhostTextInput, {width: '100%',}]} value={options} onChangeText={(options) => setOptions(options)}/>
+            <TextInput style={[designSystemStyles.GhostTextInput, {width: '100%',}]} value={options} onChangeText={(options) => {
+              setOptions(options); setModified(true);
+            }}/>
           </View>
 
         </View>
         <View style={{justifyContent: 'space-between', alignItems: 'flex-end', width: 150,}}>
           <Icon name={'trash-outline'} size={30} color={'black'}/>
-          <GhostButton title='Save' style={{width: 150}} onPress={() => onSave()}/>
+          <GhostButton title='Save' style={{width: 150, opacity: modified ? 1.0 : 0}} onPress={() => {
+            if (modified) {
+              onSave();
+              setModified(false);
+            }
+          }}/>
         </View>
       </View>
     </View>
@@ -113,7 +125,7 @@ const EditQuiz = ({ navigation }) => {
         <FlatList
           data={questions}
           renderItem={({item}) => <QuestionView data={item} user={user} quiz={quiz} dispatch={dispatch}/> }
-          style={{paddingTop: -10, paddingBottom: -10, paddingRight: 20}}
+          style={{ paddingRight: 20}}
         />
 
       </View>
