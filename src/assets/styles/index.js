@@ -91,7 +91,7 @@ const designSystemStyles = StyleSheet.create({
     marginTop: 10, 
     marginBottom: 10, 
     borderRadius: 10, 
-    backgroundColor: '#f7f7f7', 
+    backgroundColor: '#f7f7f7'
   },
 })
 

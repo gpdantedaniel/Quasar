@@ -11,6 +11,16 @@ const GhostButton = ({title, style, onPress}) => {
 
 export default GhostButton
 
+/*
+shadow: 'black',
+shadowOffset: {
+  width: 2, 
+  height: 2,
+},
+shadowOpacity: 1,
+shadowRadius: 1,
+*/
+
 const styles = StyleSheet.create({
   primaryButton: {
     textAlign: 'center',
@@ -18,7 +28,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 300,
     height: 40,
-    borderRadius: 25,
+    borderRadius: 50,
     backgroundColor: 'rgb(0, 0, 0, 0)',
     borderWidth: 2,
     borderColor: 'black',

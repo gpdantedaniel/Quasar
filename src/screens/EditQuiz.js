@@ -125,7 +125,7 @@ const EditQuiz = ({ navigation }) => {
         <FlatList
           data={questions}
           renderItem={({item}) => <QuestionView data={item} user={user} quiz={quiz} dispatch={dispatch}/> }
-          style={{ paddingRight: 20}}
+          style={{ paddingRight: 20, borderRadius: 10}}
         />
 
       </View>
