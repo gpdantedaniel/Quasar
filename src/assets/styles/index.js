@@ -80,6 +80,7 @@ const designSystemStyles = StyleSheet.create({
     marginTop: -10, 
     marginBottom: -10,
     gap: 20, 
+    paddingRight: 5,
   },
   listItem: {
     flexDirection: 'row',
@@ -91,7 +92,7 @@ const designSystemStyles = StyleSheet.create({
     marginTop: 10, 
     marginBottom: 10, 
     borderRadius: 10, 
-    backgroundColor: '#f7f7f7'
+    backgroundColor: '#f7f7f7',
   },
 })
 
