@@ -8,15 +8,17 @@ import { getApp } from "firebase/app";
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions";
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addQuestions } from '../redux/quizSlice'
+import { addQuestions, createQuiz } from '../redux/quizSlice'
 import { addDoc, collection, getFirestore, Timestamp } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
+import { addQuestion } from '../redux/questionsSlice'
 
 // const functions = getFunctions(getApp());
 // connectFunctionsEmulator(functions, "localhost", 5001);
 
 const QuizCreation = ({ navigation }) => {
   console.log('QuizCreation rendered');
+  const user = useSelector((state) => state.user);
   const [awaitingQuestions, setAwaitingQuestions] = useState(false);
   const [baseText, setBaseText] = useState('');
   const dispatch = useDispatch();
@@ -28,9 +30,24 @@ const QuizCreation = ({ navigation }) => {
     const generateQuiz = httpsCallable(functions, 'generateQuiz');
     
     generateQuiz({baseText: baseText}).then((result) => {
-      const questions = result.data;
-      const auth = getAuth();
 
+      const questions = JSON.parse(result.data);
+      
+      console.log(questions);
+
+      dispatch(createQuiz({user, questions})).then((result) => {
+        const quiz = result.payload.data;
+        console.log(result);
+
+
+        questions.forEach((question) => {
+          dispatch(addQuestion({user, quiz, data: question}))
+        })
+        navigation.navigate('EditQuiz');
+
+      })
+
+      /*
       const quiz = {
         name: "New Quiz",
         topic: "Topic Name",
@@ -53,7 +70,7 @@ const QuizCreation = ({ navigation }) => {
         })
 
       })
-
+      */
     
 
       // navigation.navigate('EditQuiz');

@@ -93,6 +93,15 @@ const designSystemStyles = StyleSheet.create({
     marginBottom: 10, 
     borderRadius: 10, 
     backgroundColor: '#f7f7f7',
+    /*
+    shadow: 'black',
+    shadowOffset: {
+      width: 1, 
+      height: 1,
+    },
+    shadowOpacity: .15,
+    shadowRadius: 4,
+    */
   },
 })
 

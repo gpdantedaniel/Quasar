@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
-import { doc, Firestore, getFirestore, Timestamp, updateDoc } from 'firebase/firestore'
+import { doc, Firestore, getDocs, getFirestore, Timestamp, updateDoc, collection, query, orderBy, addDoc } from 'firebase/firestore'
 
 const initialState = {
+  quizzes: [],
+
   docId: null,
   name: null,
   topic: null,
@@ -12,6 +14,62 @@ const initialState = {
   points: null,
 }
 
+const createQuiz = createAsyncThunk(
+  'quiz/createQuiz',
+  async({user, questions}, thunkAPI) => {
+    const quizzesRef = collection(getFirestore(), 'users', user.docId, 'quizzes');
+    const data = {
+      name: "New Quiz",
+      topic: "Topic Name",
+      description: "A quiz about something!",
+      lastTaken: Timestamp.now(),
+      creation: Timestamp.now(),
+      lastQuestionIndex: 0,
+      points: 0,
+    };
+
+    const quizRef = await addDoc(quizzesRef, data);
+    data.docId = quizRef.id;
+    // Transform all Firestore Timestamps to strings
+    data.lastTaken = data.lastTaken.toDate().toString();
+    data.creation = data.creation.toDate().toString();
+    return {data}
+  }
+)
+
+const fetchQuizzes = createAsyncThunk(
+  'quiz/fetchQuizzes',
+  async({user}, thunkAPI) => {
+    try {
+      if (user.docId) {
+        const quizzesRef = collection(getFirestore(), 'users', user.docId, 'quizzes');
+        const q = query(quizzesRef, orderBy('lastTaken', 'desc'));
+        const querySnapshot = await getDocs(q);
+        const docs = querySnapshot.docs;
+        // Add docId to all quizzes and change Firestore Timestamps to strings
+        const quizzes = docs.map((doc) => ({...doc.data(), ...{docId: doc.id}})).map((quiz) => { 
+          quiz.lastTaken = quiz.lastTaken.toDate().toString();
+          quiz.creation = quiz.creation.toDate().toString();
+          return quiz
+        });
+
+        console.log("quizzes: ", quizzes);
+        return {quizzes}
+      }
+
+      return {quizzes: []}
+    } catch(error) {
+      console.log(error);
+    }
+  }
+)
+
+const deleteQuiz = createAsyncThunk(
+  'quiz/deleteQuiz',
+  async({user, quiz}, thunkAPI) => {
+
+  }
+)
 
 const updateLastTaken = createAsyncThunk(
   'quiz/updateLastTaken',
@@ -26,7 +84,6 @@ const updateLastTaken = createAsyncThunk(
       console.log(error);
     }
   }
-  
 )
 
 const resetProgress = createAsyncThunk(
@@ -104,6 +161,23 @@ export const quizSlice = createSlice({
       state.lastTaken = action.payload.lastTaken
     })
 
+    builder.addCase(fetchQuizzes.fulfilled, (state, action) => {
+      console.log('action.payload.quizzes', action.payload.quizzes);
+      state.quizzes = action.payload.quizzes
+    })
+
+    builder.addCase(createQuiz.fulfilled, (state, action) => {
+      state.docId = action.payload.data.docId;
+      state.name = action.payload.data.name;
+      state.topic = action.payload.data.topic;
+      state.description = action.payload.data.description;
+      state.lastTaken = action.payload.data.lastTaken;
+      state.creation = action.payload.data.creation;
+      state.lastQuestionIndex = action.payload.data.lastQuestionIndex;
+      state.points = action.payload.data.points;
+
+      state.quizzes.push(action.payload.data);
+    })
   }
 })
 
@@ -116,6 +190,6 @@ export const {
   clearQuiz
 } = quizSlice.actions;
 
-export { updateProgress, resetProgress, updateLastTaken }
+export { updateProgress, resetProgress, updateLastTaken, fetchQuizzes, createQuiz }
 
 export default quizSlice.reducer;

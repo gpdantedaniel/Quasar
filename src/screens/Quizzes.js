@@ -7,14 +7,22 @@ import { collection, doc, getDocs, getFirestore, orderBy, query } from 'firebase
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useSelector, useDispatch } from 'react-redux'
-import { loadQuiz, updateLastTaken } from '../redux/quizSlice'
+import { fetchQuizzes, loadQuiz, updateLastTaken } from '../redux/quizSlice'
 import { getQuestions } from '../redux/questionsSlice'
 
 const Quizzes = ({ navigation }) => {
-  const [quizzes, setQuizzes] = useState([]);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const quizzes = useSelector((state) => state.quiz.quizzes);
+
+  console.log('user: ', user);
   console.log('quizzes: ', quizzes);
+
+  useEffect(() => {
+    if (user.docId) {
+      dispatch(fetchQuizzes({user}));
+    }
+  }, [user])
 
   const onSelectQuiz = (quiz) => {
 
@@ -23,34 +31,6 @@ const Quizzes = ({ navigation }) => {
 
     navigation.navigate('QuizPreview');
   }
-
-  const getQuizzes = async() => {
-    const auth = getAuth();
-    const quizzesRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
-    const q = query(quizzesRef, orderBy('lastTaken', 'desc'));
-
-    const querySnapshot = await getDocs(q);
-    const docs = querySnapshot.docs;
-
-    // Get all the quiz data, the document's id and change the Firestore Timestamps to Strings
-    const quizzes = docs.map((doc) => ({...doc.data(), ...{docId: doc.id}})).map((quiz) => { 
-      quiz.lastTaken = quiz.lastTaken.toDate().toString();
-      quiz.creation = quiz.creation.toDate().toString();
-      return quiz
-    })
-
-    return quizzes;
-  }
-
-
-  useEffect(() => {
-    getQuizzes().then((quizzes) => {
-      setQuizzes(quizzes);
-    }).catch((error) => {
-      console.log(error);
-    });
-  }, [])
-
   
   if (Object.keys(quizzes).length > 0) { return (
     <View style={designSystemStyles.container}>
