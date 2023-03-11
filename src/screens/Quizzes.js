@@ -63,18 +63,27 @@ const Quizzes = ({ navigation }) => {
             <TouchableOpacity 
             style={designSystemStyles.listItem} 
             onPress={() => onSelectQuiz(quizzes[index])}>
-              <View>
-                <Text style={designSystemStyles.bodyText}>
+              <View style={{width: '40%'}}>
+                <Text numberOfLines={1} style={designSystemStyles.bodyText}>
                   {quizzes[index].name}
                 </Text>
-                <Text style={designSystemStyles.bodyTextSmall}>
+                <Text numberOfLines={1} style={designSystemStyles.bodyTextSmall}>
                   {quizzes[index].topic}
                 </Text>
               </View>
-              <Text style={designSystemStyles.bodyText}>
-                {quizzes[index].description}
-              </Text>
-              <Icon name={'arrow-forward-circle-outline'} color={'black'} size={36}/>
+              <View style={{width: '50%', alignItems: 'left'}}>
+                <Text numberOfLines={1} style={designSystemStyles.bodyText}>
+                  {quizzes[index].description}
+                </Text>
+              </View>
+              <View style={{width: '10%'}}>
+                <Icon 
+                  style={{alignSelf:'flex-end'}} 
+                  name={'arrow-forward-circle-outline'} 
+                  color={'black'} 
+                  size={36}
+                />
+              </View>
             </TouchableOpacity>
           }
         />

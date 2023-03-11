@@ -50,7 +50,7 @@ const Stack = createNativeStackNavigator();
 const defaultScreenOptions = {headerShown: false,  animation: 'none'};
 
 export default function App() {
-  const [loaded, setLoaded] = useState(false);
+  const [authLoaded, setAuthLoaded] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [fontsLoaded] = useFonts({
     'Inter-Bold': require('./src/assets/fonts/Inter/Inter-Bold.otf'),
@@ -62,15 +62,23 @@ export default function App() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setLoaded(true);
+        setAuthLoaded(true);
         setLoggedIn(true);
       } else {
-        setLoaded(true);
+        setAuthLoaded(true);
         setLoggedIn(false);
       }
     })
   }, [auth])
 
+  // Make sure Auth & Fonts are loaded
+  if (!authLoaded || !fontsLoaded) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    )
+  }
 
   if (loggedIn) {
     return (

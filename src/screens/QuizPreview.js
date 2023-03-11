@@ -6,20 +6,24 @@ import { useDispatch, useSelector } from 'react-redux'
 import { resetProgress, updateLastTaken } from '../redux/quizSlice'
 
 const QuizPreview = ({ navigation }) => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const quiz = useSelector((state) => state.quiz);
   const questions = useSelector((state) => state.questions.questions);
-  const completed = !(quiz.lastQuestionIndex < questions.length - 1);
-  const dispatch = useDispatch();
+
+  // Completed must always default to true if the last index is greater than the number of questions loaded
+  const completed = !(quiz.lastQuestionIndex < questions.length);
+  // Calculate the ratio of the last question's index to the total number
+  const progress = questions.length > 0 ? Number((quiz.lastQuestionIndex/questions.length*100).toPrecision(2)) : 0;
+  // Calculate the ratio of points to the total number
+  const mark = questions.length > 0 ? Number((quiz.points/questions.length*100).toPrecision(2)) : 0;
 
   console.log('quiz: ', quiz);
-
   useEffect(() => {}, [quiz, questions]);
 
   const onResetProgress = () => {
     dispatch(resetProgress({user, quiz}))
   };
-
 
   const onStart = () => {
     // Update Timestamp for indexing purposes
@@ -33,11 +37,6 @@ const QuizPreview = ({ navigation }) => {
     }
   }
 
-
-  // Calculate the ratio of the last question's index to the total number
-  const progress = questions.length > 0 ? Number((quiz.lastQuestionIndex/questions.length*100).toPrecision(2)) : 0;
-  // Calculate the ratio of points to the total number
-  const mark = questions.length > 0 ? Number((quiz.points/questions.length*100).toPrecision(2)) : 0;
 
   return (
     <View style={styles.container}>
