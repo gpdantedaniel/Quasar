@@ -25,6 +25,8 @@ import { store } from './src/redux/store';
 import { Provider } from 'react-redux';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 
+import { Toaster } from 'react-hot-toast';
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -82,11 +84,22 @@ export default function App() {
 
   if (loggedIn) {
     return (
-      <Provider store={store}>
-        <NavigationContainer>
-          <MainStack/>
-        </NavigationContainer>
-      </Provider>
+      <View style={{flex: 1}}>
+        <Toaster 
+        position="top-right" 
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            ...designSystemStyles.bodyText, 
+            ...designSystemStyles.toast
+          }
+        }}/>
+        <Provider store={store}>
+          <NavigationContainer>
+            <MainStack/>
+          </NavigationContainer>    
+        </Provider>
+      </View>
     )
   }
 

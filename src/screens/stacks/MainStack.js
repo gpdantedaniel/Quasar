@@ -12,7 +12,7 @@ import { collection, doc, getDoc, getDocs, getFirestore } from 'firebase/firesto
 
 import { loadUser } from '../../redux/userSlice';
 import { useDispatch } from 'react-redux';
-import { addQuiz } from '../../redux/quizzesSlice';
+import { addQuiz, fetchQuizzes } from '../../redux/quizzesSlice';
 
 const Vertical = createVerticalNavigator();
 
@@ -21,6 +21,9 @@ const MainStack = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(fetchQuizzes());
+
+
     const userDocRef = doc(getFirestore(), 'users', auth.currentUser.uid);
     getDoc(userDocRef).then((result) => { 
       if (result) {
@@ -52,7 +55,7 @@ const MainStack = () => {
     });
     */
 
-  })
+  }, [])
 
   return (
     <Vertical.Navigator>

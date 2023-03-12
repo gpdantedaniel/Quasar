@@ -8,27 +8,18 @@ import { FlatList, ScrollView, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchQuizzes, loadQuiz, updateLastTaken } from '../redux/quizSlice'
-import { getQuestions } from '../redux/questionsSlice'
+import { fetchQuestions } from '../redux/questionsSlice'
 
 const Quizzes = ({ navigation }) => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
-  const quizzes = useSelector((state) => state.quiz.quizzes);
-
-  console.log('user: ', user);
-  console.log('quizzes: ', quizzes);
-
-  useEffect(() => {
-    if (user.docId) {
-      dispatch(fetchQuizzes({user}));
-    }
-  }, [user])
+  const quizzes = useSelector((state) => state.quizzes.quizzes).slice().sort((a, b) => {
+    // Sort the quizzes by date in descending order
+    return new Date(b.lastTaken) - new Date(a.lastTaken);
+  })
 
   const onSelectQuiz = (quiz) => {
-
-    dispatch(loadQuiz(quiz));
-    dispatch(getQuestions({user, quiz}));
-
+    dispatch(loadQuiz({ quiz }));
+    dispatch(fetchQuestions({ quiz }));
     navigation.navigate('QuizPreview');
   }
   
@@ -43,7 +34,7 @@ const Quizzes = ({ navigation }) => {
             <TouchableOpacity 
             style={designSystemStyles.listItem} 
             onPress={() => onSelectQuiz(quizzes[index])}>
-              <View style={{width: '40%'}}>
+              <View style={{width: '30%'}}>
                 <Text numberOfLines={1} style={designSystemStyles.bodyText}>
                   {quizzes[index].name}
                 </Text>
@@ -51,7 +42,7 @@ const Quizzes = ({ navigation }) => {
                   {quizzes[index].topic}
                 </Text>
               </View>
-              <View style={{width: '50%', alignItems: 'left'}}>
+              <View style={{width: '60%', alignItems: 'left'}}>
                 <Text numberOfLines={1} style={designSystemStyles.bodyText}>
                   {quizzes[index].description}
                 </Text>

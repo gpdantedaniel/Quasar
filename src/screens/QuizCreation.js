@@ -8,83 +8,66 @@ import { getApp } from "firebase/app";
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions";
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addQuestions, createQuiz } from '../redux/quizSlice'
+import { addQuestions, loadQuiz } from '../redux/quizSlice'
 import { addDoc, collection, getFirestore, Timestamp } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { addQuestion } from '../redux/questionsSlice'
 
-// const functions = getFunctions(getApp());
-// connectFunctionsEmulator(functions, "localhost", 5001);
+import { createQuiz } from '../redux/quizzesSlice'
+
+import toast from 'react-hot-toast';
+
 
 const QuizCreation = ({ navigation }) => {
-  console.log('QuizCreation rendered');
-  const user = useSelector((state) => state.user);
-  const [awaitingQuestions, setAwaitingQuestions] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [baseText, setBaseText] = useState('');
   const dispatch = useDispatch();
 
   const onCreateQuiz = () => {
-    // Change screen to loading screen
-    setAwaitingQuestions(true);
-    const functions = getFunctions(getApp());
-    const generateQuiz = httpsCallable(functions, 'generateQuiz');
-    
-    generateQuiz({baseText: baseText}).then((result) => {
 
-      const questions = JSON.parse(result.data);
+    if (baseText === '') {
+      toast('Put in some text first!');
+      return
+    } 
+
+    try {
+      setProcessing(true);
+      const functions = getFunctions(getApp());
+      const generateQuiz = httpsCallable(functions, 'generateQuiz');
       
-      console.log(questions);
+      generateQuiz({baseText: baseText}).then(async(result) => {
+        const data = JSON.parse(result.data);
+        const questions = data.questions;
+        const descriptors = data.descriptors;
+        
+        console.log(questions);
+        console.log(descriptors);
 
-      dispatch(createQuiz({user, questions})).then((result) => {
-        const quiz = result.payload.data;
-        console.log(result);
-
-
-        questions.forEach((question) => {
-          dispatch(addQuestion({user, quiz, data: question}))
-        })
-        navigation.navigate('EditQuiz');
-
-      })
-
-      /*
-      const quiz = {
-        name: "New Quiz",
-        topic: "Topic Name",
-        description: "A quiz about something!",
-        lastTaken: Timestamp.now(),
-        creation: Timestamp.now(),
-        lastQuestionIndex: 0,
-        points: 0,
-      };
-
-      
-      const quizzesColRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
-
-      addDoc(quizzesColRef, quiz).then(({ docId }) => {
-
-        const questionsColRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', docId, 'questions');
-
-        questions.forEach((question) => {
-          addDoc(questionsColRef, question);
+        const creation = await dispatch(createQuiz({ descriptors }));
+        const quiz = creation.payload;
+        console.log('quiz: ', quiz)
+        
+        dispatch(loadQuiz({ quiz }));
+        await questions.forEach(async (question) => {
+          await dispatch(addQuestion({ quiz, data: question }))
         })
 
+        navigation.navigate('QuizPreview');
+      }).catch((error) => {
+        console.log(error);
       })
-      */
-    
 
-      // navigation.navigate('EditQuiz');
-            // dispatch(addQuestions(data));
+    } catch(error) { 
+      toast.error('Could not generate quiz... Try again later');
+      setProcessing(false);
 
-
-    }).catch((error) => {
-      console.log(error);
-    })
+      console.log(error) 
+    }
   }
 
 
-  if (awaitingQuestions) { return (
-    <View style={styles.container}>
+  if (processing) { return (
+    <View style={designSystemStyles.container}>
       <View style={{gap: 10}}>
         <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>Creating Quiz</Text>
         <Text style={designSystemStyles.subHeading}>Please wait while your quiz is being created. Do not close this window.</Text>
@@ -95,7 +78,7 @@ const QuizCreation = ({ navigation }) => {
   )}
 
   return (
-    <View style={styles.container}>
+    <View style={designSystemStyles.container}>
       <View style={{gap: 10}}>
         <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>Quiz Creation</Text>
         <Text style={designSystemStyles.subHeading}>Add your text in the box below and we’ll turn it into questions!</Text>
@@ -105,7 +88,7 @@ const QuizCreation = ({ navigation }) => {
         multiline
         autoComplete={false}
         autoCorrect={false}
-        style={[designSystemStyles.bodyText, {flex: 1, borderWidth: 1, borderColor: 'black', borderRadius: 10, outlineStyle: 'none', padding: 20}]}
+        style={[designSystemStyles.bodyText, designSystemStyles.inputTextBox]}
         onChangeText={(baseText) =>  setBaseText(baseText)}
       />
       <View style={{flexDirection: 'row', gap: 20}}>
@@ -118,14 +101,3 @@ const QuizCreation = ({ navigation }) => {
 }
 
 export default QuizCreation
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'left',
-    justifyContent: 'center',
-    gap: 20,
-    padding: 50,
-  }
-})

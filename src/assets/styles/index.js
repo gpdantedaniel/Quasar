@@ -80,7 +80,7 @@ const designSystemStyles = StyleSheet.create({
     marginTop: -10, 
     marginBottom: -10,
     gap: 20, 
-    paddingRight: 5,
+    paddingRight: 20,
   },
   listItem: {
     flexDirection: 'row',
@@ -103,6 +103,19 @@ const designSystemStyles = StyleSheet.create({
     shadowRadius: 4,
     */
   },
+  inputTextBox: {
+    flex: 1, 
+    padding: 20,
+    borderWidth: 1, 
+    borderRadius: 10,
+    borderColor: 'black', 
+    outlineStyle: 'none', 
+  },
+  toast: {
+    boxShadow: 'none',
+    border: '1px solid #c7c7c7',
+    borderRadius: '10px',
+  }
 })
 
 export default designSystemStyles

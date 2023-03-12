@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import { doc, Firestore, getDocs, getFirestore, Timestamp, updateDoc, collection, query, orderBy, addDoc } from 'firebase/firestore'
+import { getAuth } from "firebase/auth";
 
 const initialState = {
   quizzes: [],
@@ -13,56 +14,6 @@ const initialState = {
   lastQuestionIndex: null,
   points: null,
 }
-
-const createQuiz = createAsyncThunk(
-  'quiz/createQuiz',
-  async({user, questions}, thunkAPI) => {
-    const quizzesRef = collection(getFirestore(), 'users', user.docId, 'quizzes');
-    const data = {
-      name: "New Quiz",
-      topic: "Topic Name",
-      description: "A quiz about something!",
-      lastTaken: Timestamp.now(),
-      creation: Timestamp.now(),
-      lastQuestionIndex: 0,
-      points: 0,
-    };
-
-    const quizRef = await addDoc(quizzesRef, data);
-    data.docId = quizRef.id;
-    // Transform all Firestore Timestamps to strings
-    data.lastTaken = data.lastTaken.toDate().toString();
-    data.creation = data.creation.toDate().toString();
-    return {data}
-  }
-)
-
-const fetchQuizzes = createAsyncThunk(
-  'quiz/fetchQuizzes',
-  async({user}, thunkAPI) => {
-    try {
-      if (user.docId) {
-        const quizzesRef = collection(getFirestore(), 'users', user.docId, 'quizzes');
-        const q = query(quizzesRef, orderBy('lastTaken', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const docs = querySnapshot.docs;
-        // Add docId to all quizzes and change Firestore Timestamps to strings
-        const quizzes = docs.map((doc) => ({...doc.data(), ...{docId: doc.id}})).map((quiz) => { 
-          quiz.lastTaken = quiz.lastTaken.toDate().toString();
-          quiz.creation = quiz.creation.toDate().toString();
-          return quiz
-        });
-
-        console.log("quizzes: ", quizzes);
-        return {quizzes}
-      }
-
-      return {quizzes: []}
-    } catch(error) {
-      console.log(error);
-    }
-  }
-)
 
 const deleteQuiz = createAsyncThunk(
   'quiz/deleteQuiz',
@@ -122,15 +73,33 @@ const updateProgress = createAsyncThunk(
   }
 )
 
+const setDescriptors = createAsyncThunk(
+  'quiz/setDescriptors',
+  async({ quiz, descriptors }, thunkAPI) => {
+    try {
+      const auth = getAuth();
+      const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
+      await updateDoc(quizRef, {
+        name: descriptors.name,
+        topic: descriptors.topic,
+        description: descriptors.description,
+      })
+  
+      return { descriptors }
+    } catch(error) {
+      console.log(error);
+    }
+  }
+)
+
 export const quizSlice = createSlice({
   name: 'quiz',
   initialState,
   reducers: {
     // Load a selected quiz
     loadQuiz: (state, action) => {
-      state = Object.assign(state, action.payload);
+      state = Object.assign(state, action.payload.quiz);
     },
- 
     // Update name, topic, and description
     updateDescriptors: () => {},
     // Update lastQuestionIndex and points
@@ -146,6 +115,12 @@ export const quizSlice = createSlice({
   },
 
   extraReducers: (builder) => {
+
+    builder.addCase(setDescriptors.fulfilled, (state, action) => {
+      state.name = action.payload.descriptors.name;
+      state.topic = action.payload.descriptors.topic;
+      state.description = action.payload.descriptors.description;
+    })
     
     builder.addCase(updateProgress.fulfilled, (state, action) => {
       state.lastQuestionIndex = state.lastQuestionIndex + 1;
@@ -160,24 +135,6 @@ export const quizSlice = createSlice({
     builder.addCase(updateLastTaken.fulfilled, (state, action) => {
       state.lastTaken = action.payload.lastTaken
     })
-
-    builder.addCase(fetchQuizzes.fulfilled, (state, action) => {
-      console.log('action.payload.quizzes', action.payload.quizzes);
-      state.quizzes = action.payload.quizzes
-    })
-
-    builder.addCase(createQuiz.fulfilled, (state, action) => {
-      state.docId = action.payload.data.docId;
-      state.name = action.payload.data.name;
-      state.topic = action.payload.data.topic;
-      state.description = action.payload.data.description;
-      state.lastTaken = action.payload.data.lastTaken;
-      state.creation = action.payload.data.creation;
-      state.lastQuestionIndex = action.payload.data.lastQuestionIndex;
-      state.points = action.payload.data.points;
-
-      state.quizzes.push(action.payload.data);
-    })
   }
 })
 
@@ -190,6 +147,6 @@ export const {
   clearQuiz
 } = quizSlice.actions;
 
-export { updateProgress, resetProgress, updateLastTaken, fetchQuizzes, createQuiz }
+export { updateProgress, resetProgress, updateLastTaken, setDescriptors }
 
 export default quizSlice.reducer;

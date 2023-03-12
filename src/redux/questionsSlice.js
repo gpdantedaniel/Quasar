@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getAuth } from "firebase/auth";
 import { collection, doc, getDocs, getFirestore, updateDoc, addDoc } from "firebase/firestore";
 
 // AsyncThunk functions
-const getQuestions = createAsyncThunk(
-  'questions/getQuestions',
-  async ({ user, quiz }, thunkAPI) => {
+const fetchQuestions = createAsyncThunk(
+  'questions/fetchQuestions',
+  async ({ quiz }, thunkAPI) => {
     try {
-      const questionsRef = collection(getFirestore(), 'users', user.docId, 'quizzes', quiz.docId, 'questions');
+      const auth = getAuth();
+      const questionsRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId, 'questions');
       const querySnapshot = await getDocs(questionsRef);
       const questions = querySnapshot.docs.map((doc) => ({...doc.data(), docId: doc.id}));
       return questions
@@ -20,9 +22,10 @@ const getQuestions = createAsyncThunk(
 
 const addQuestion = createAsyncThunk(
   'questions/addQuestion',
-  async({user, quiz, data}, thunkAPI) => {
+  async({ quiz, data }, thunkAPI) => {
     try{
-      const questionsRef = collection(getFirestore(), 'users', user.docId, 'quizzes', quiz.docId, 'questions');
+      const auth = getAuth();
+      const questionsRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId, 'questions');
       const docRef = await addDoc(questionsRef, data);
       return {docId: docRef.id, ...data}
     } catch(error) {
@@ -60,7 +63,7 @@ export const questionsSlice = createSlice({
     */
   },
   extraReducers: (builder) => {
-    builder.addCase(getQuestions.fulfilled, (state, action) => {
+    builder.addCase(fetchQuestions.fulfilled, (state, action) => {
       state.questions = action.payload;
     })
 
@@ -89,6 +92,6 @@ export const questionsSlice = createSlice({
 })
 
 export const { } = questionsSlice.actions;
-export { getQuestions, updateQuestion, addQuestion }
+export { fetchQuestions, updateQuestion, addQuestion }
 
 export default questionsSlice.reducer;

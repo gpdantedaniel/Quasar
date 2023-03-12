@@ -7,6 +7,8 @@ import { getAuth } from 'firebase/auth'
 import { addDoc, collection, doc, getDocs, getFirestore, setDoc, updateDoc } from 'firebase/firestore'
 import { useDispatch, useSelector } from 'react-redux'
 import { addQuestion, updateQuestion } from '../redux/questionsSlice'
+import { setDescriptors } from '../redux/quizSlice'
+import { toast } from 'react-hot-toast'
 
 
 const QuestionView = ({ data, user, quiz, dispatch }) => {
@@ -15,20 +17,20 @@ const QuestionView = ({ data, user, quiz, dispatch }) => {
   const [options, setOptions] = useState(data.options.join(';'));
   const [modified, setModified] = useState(false);
 
-  console.log('question data: ', data);
-
-  const onSave = () => {
-    // The data that will be updated
-    const updateData = {
-      question, 
+  const onSave = async () => {
+    const update = {
+      question,
       answer, 
       options: options.split(';')
     };
-    
-    if (data.docId) {
-      console.log('dispatching...');
-      dispatch(updateQuestion({user, quiz, docId: data.docId, data: updateData}));
-    }
+
+    const saved = dispatch(updateQuestion({user, quiz, docId: data.docId, data: update}))
+    saved.then(() => setModified(false));
+    toast.promise(saved, {
+      loading: 'Saving...',
+      success: 'Changes saved!',
+      error: 'Could not save',
+    })
   }
 
   return (
@@ -84,38 +86,66 @@ const EditQuiz = ({ navigation }) => {
   const [name, setName] = useState(quiz.name);
   const [topic, setTopic] = useState(quiz.topic);
   const [description, setDescription] = useState(quiz.description);  
+  const [descriptorsModified, setDescriptorsModified] = useState(false);
+
+  const onSaveDescriptors = () => {
+    const descriptors = {name, topic, description};
+    const saved = dispatch(setDescriptors({ quiz, descriptors }))
+    saved.then(() => setDescriptorsModified(false));
+    toast.promise(saved, {
+      loading: 'Saving...',
+      success: 'Changes saved!',
+      error: 'Could not save',
+    })
+  }
 
   const onAddQuestion = () => {
-    dispatch(addQuestion({user, quiz, data: {
+    const result = dispatch(addQuestion({user, quiz, data: {
       question: "New question",
       answer: "answer",
       options: ["option1", "option2", "option3", "option4"]
     }}))
+
+    toast.promise(result, {
+      loading: 'Creating question...',
+      success: 'Question created!',
+      error: 'Could not create question'
+    })
   }
 
   return (
     <View style={styles.container}>
       <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>Edit Quiz</Text>
 
-      <View>
-        <View style={{gap: 20}}>
+      <View style={{flexDirection: 'row', alignItems: 'flex-end', gap: 20}}>
+        <View style={{gap: 20,}}>
           <View style={{flexDirection: 'row', gap: 20}}>
             <View>
               <Text style={designSystemStyles.bodyTextSmall}>Quiz name</Text>
-              <TextInput style={designSystemStyles.GhostTextInput} value={name} onChangeText={(name) => setName(name)}/>
-
+              <TextInput style={designSystemStyles.GhostTextInput} value={name} onChangeText={(name) => {
+                setDescriptorsModified(true); setName(name)
+              }}/>
             </View>
             <View>
               <Text style={designSystemStyles.bodyTextSmall}>Topic</Text>
-              <TextInput style={designSystemStyles.GhostTextInput} value={topic} onChangeText={(topic) => setTopic(topic)}/>
+              <TextInput style={designSystemStyles.GhostTextInput} value={topic} onChangeText={(topic) => {
+                setDescriptorsModified(true); setTopic(topic)
+              }}/>
             </View>
           </View>
           <View>
             <Text style={designSystemStyles.bodyTextSmall}>Description</Text>
-            <TextInput style={[designSystemStyles.GhostTextInput, {width: 620}]} value={description} onChangeText={(description) => setDescription(description)}/>
+            <TextInput style={[designSystemStyles.GhostTextInput, {width: 620}]} value={description} onChangeText={(description) => {
+              setDescriptorsModified(true); setDescription(description)
+            }}/>
           </View>
         </View>
-      </View>      
+        <GhostButton 
+          title='Save' 
+          style={{width: 150, opacity: descriptorsModified ? 1.0 : 0}} 
+          onPress={() => onSaveDescriptors()}
+        />
+      </View>     
       <View style={{flex: 1, gap: 20}}>
         <View style={{flexDirection: 'row', gap: 20, alignItems: 'center'}}>
           <Text style={designSystemStyles.heading}>Questions</Text>

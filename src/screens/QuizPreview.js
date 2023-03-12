@@ -4,6 +4,7 @@ import designSystemStyles from '../assets/styles'
 import { GhostButton, PrimaryButton } from '../components'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetProgress, updateLastTaken } from '../redux/quizSlice'
+import { toast } from 'react-hot-toast'
 
 const QuizPreview = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -21,8 +22,17 @@ const QuizPreview = ({ navigation }) => {
   console.log('quiz: ', quiz);
   useEffect(() => {}, [quiz, questions]);
 
+  const onDelete = () => {
+    console.log('deleting');
+  }
+
   const onResetProgress = () => {
-    dispatch(resetProgress({user, quiz}))
+    const reset = dispatch(resetProgress({user, quiz}));
+    toast.promise(reset, {
+      loading: 'Resetting',
+      success: 'Succesfully reset quiz!',
+      error: 'Could not reset quiz',
+    })
   };
 
   const onStart = () => {
@@ -79,7 +89,7 @@ const QuizPreview = ({ navigation }) => {
         />
         <GhostButton title='Reset Quiz' style={{width: 200}} onPress={() => onResetProgress()}/>
         <GhostButton title='Edit Quiz' style={{width: 200}} onPress={() => navigation.navigate('EditQuiz')}/>
-        <GhostButton title='Delete Quiz' style={{width: 200}}/>
+        <GhostButton title='Delete Quiz' style={{width: 200}} onPress={() => onDelete()}/>
       </View>
       <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack('Quizzes')}/>
     </View>
