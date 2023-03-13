@@ -1,67 +1,71 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useState }from 'react'
-import designSystemStyles from '../assets/styles'
-import { TextInput } from 'react-native-web'
+import React, { useState } from 'react'
+import { Text, View, TextInput } from 'react-native'
 import { GhostButton, PrimaryButton } from '../components'
+import designSystemStyles from '../assets/styles'
 
 import { getApp } from "firebase/app";
-import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
-import { useSelector, useDispatch } from 'react-redux'
-import { addQuestions, loadQuiz } from '../redux/quizSlice'
-import { addDoc, collection, getFirestore, Timestamp } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
-import { addQuestion } from '../redux/questionsSlice'
-
+import { useDispatch } from 'react-redux'
 import { createQuiz } from '../redux/quizzesSlice'
+import { loadQuiz } from '../redux/quizSlice'
+import { addQuestion } from '../redux/questionsSlice'
 
 import toast from 'react-hot-toast';
 
-
 const QuizCreation = ({ navigation }) => {
-  const [processing, setProcessing] = useState(false);
-  const [baseText, setBaseText] = useState('');
   const dispatch = useDispatch();
+  const [input, setInput] = useState('');
+  const [processing, setProcessing] = useState(false);
+
+  const functions = getFunctions(getApp());
+  const generateQuiz = httpsCallable(functions, 'generateQuiz');
 
   const onCreateQuiz = () => {
-
-    if (baseText === '') {
-      toast('Put in some text first!');
+    if (input === '') {
+      toast('Put some text in first!');
       return
-    } 
+    }
+    setProcessing(true);
 
     try {
-      setProcessing(true);
-      const functions = getFunctions(getApp());
-      const generateQuiz = httpsCallable(functions, 'generateQuiz');
-      
-      generateQuiz({baseText: baseText}).then(async(result) => {
-        const data = JSON.parse(result.data);
-        const questions = data.questions;
-        const descriptors = data.descriptors;
-        
-        console.log(questions);
-        console.log(descriptors);
+      const create = async() => {
+        const result = await generateQuiz({baseText: input});
+        const descriptors = result.data.descriptors;
+        const questions = result.data.questions;
 
-        const creation = await dispatch(createQuiz({ descriptors }));
-        const quiz = creation.payload;
-        console.log('quiz: ', quiz)
-        
-        dispatch(loadQuiz({ quiz }));
-        await questions.forEach(async (question) => {
-          await dispatch(addQuestion({ quiz, data: question }))
-        })
+        const quizCreation = await dispatch(createQuiz({ descriptors }));
+        const quiz = quizCreation.payload;
 
+        await dispatch(loadQuiz({ quiz }));
+        await Promise.all(questions.map((question) => 
+          // Await all the questions before moving on
+          dispatch(addQuestion({ quiz, data: question }))
+        ));
+
+        return
+      }
+
+      // This should be a promise
+      const creation = create();
+      creation.then(() => {
+        setProcessing(false);
         navigation.navigate('QuizPreview');
       }).catch((error) => {
         console.log(error);
+        setProcessing(false);
+      })
+            
+      toast.promise(creation, {
+        loading: 'Creating quiz',
+        success: 'Quiz ready!',
+        error: 'Could not generate quiz. Try again later'
       })
 
-    } catch(error) { 
-      toast.error('Could not generate quiz... Try again later');
+    } catch(error) {
+      console.log(error);
+      toast.error('Could not generate quiz. Try again later');
       setProcessing(false);
-
-      console.log(error) 
     }
   }
 
@@ -89,7 +93,7 @@ const QuizCreation = ({ navigation }) => {
         autoComplete={false}
         autoCorrect={false}
         style={[designSystemStyles.bodyText, designSystemStyles.inputTextBox]}
-        onChangeText={(baseText) =>  setBaseText(baseText)}
+        onChangeText={(input) =>  setInput(input)}
       />
       <View style={{flexDirection: 'row', gap: 20}}>
         <PrimaryButton title='Submit' style={{width: 200}} onPress={() => onCreateQuiz()}/>

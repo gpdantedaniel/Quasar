@@ -1,58 +1,53 @@
-import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
-import designSystemStyles from '../assets/styles'
+import { Text, View } from 'react-native'
 import { GhostButton, PrimaryButton } from '../components'
+import designSystemStyles from '../assets/styles'
+
 import { useDispatch, useSelector } from 'react-redux'
 import { resetProgress, updateLastTaken } from '../redux/quizSlice'
-import { toast } from 'react-hot-toast'
+
+import toast from 'react-hot-toast'
 
 const QuizPreview = ({ navigation }) => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
   const quiz = useSelector((state) => state.quiz);
   const questions = useSelector((state) => state.questions.questions);
 
+  const creation = new Date(quiz.creation);
+  const lastTaken = new Date(quiz.lastTaken);
+
   // Completed must always default to true if the last index is greater than the number of questions loaded
   const completed = !(quiz.lastQuestionIndex < questions.length);
-  // Calculate the ratio of the last question's index to the total number
-  const progress = questions.length > 0 ? Number((quiz.lastQuestionIndex/questions.length*100).toPrecision(2)) : 0;
-  // Calculate the ratio of points to the total number
-  const mark = questions.length > 0 ? Number((quiz.points/questions.length*100).toPrecision(2)) : 0;
-
-  console.log('quiz: ', quiz);
-  useEffect(() => {}, [quiz, questions]);
+  // Calculate the ratio of the last question's index to the total number of questions
+  const progress = Number((quiz.lastQuestionIndex/questions.length*100)).toPrecision(3);
+  // Calculate the ratio of points to the total number of questions
+  const grade = Number((quiz.points/questions.length*100)).toPrecision(3);
 
   const onDelete = () => {
     console.log('deleting');
   }
 
   const onResetProgress = () => {
-    const reset = dispatch(resetProgress({user, quiz}));
+    const reset = dispatch(resetProgress({ quiz }));
     toast.promise(reset, {
-      loading: 'Resetting',
+      loading: 'Resetting quiz',
       success: 'Succesfully reset quiz!',
       error: 'Could not reset quiz',
     })
   };
 
-  const onStart = () => {
+  const onStart = async () => {
     // Update Timestamp for indexing purposes
-    dispatch(updateLastTaken({user, quiz}));
-    if (completed) {
-      dispatch(resetProgress({user, quiz})).then(() => {
-        navigation.navigate('Quiz');
-      })
-    } else {
-      navigation.navigate('Quiz');
-    }
+    await dispatch(updateLastTaken({ quiz }));
+    completed ? await dispatch(resetProgress({ quiz })) : null;
+    navigation.navigate('Quiz');
   }
 
-
   return (
-    <View style={styles.container}>
+    <View style={designSystemStyles.container}>
       <View style={{gap: 10}}>
         <View>
-          <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>{quiz.name}</Text>
+          <Text style={[designSystemStyles.bigHeadingBold]}>{quiz.name}</Text>
           <Text style={[designSystemStyles.subHeading, {color: '#7c7c7c'}]}>{quiz.topic}</Text>
         </View>
         <Text style={designSystemStyles.bodyText}>{quiz.description}</Text>
@@ -61,19 +56,20 @@ const QuizPreview = ({ navigation }) => {
       <View style={{flex: 1, gap: 20}}>
         <View style={{gap: 10}}>
           <Text style={designSystemStyles.bodyText}>
-            Progress: {(quiz.lastQuestionIndex)} out of {questions.length} questions
+            Progress: {(quiz.lastQuestionIndex)} out of {questions.length} questions ({progress}%)
           </Text>
           <View style={designSystemStyles.progressBar}>
             <View style={[designSystemStyles.progressFill, {width: `${progress}%`}]}/>
           </View>
           <Text style={designSystemStyles.bodyText}>
-            Current mark: {(quiz.points)}/{questions.length}
+            Grade: {(quiz.points)}/{questions.length} ({grade}%)
           </Text>
           <View style={designSystemStyles.progressBar}>
-            <View style={[designSystemStyles.progressFill, {width: `${mark}%`}]}/>
+            <View style={[designSystemStyles.progressFill, {width: `${grade}%`}]}/>
           </View>
           <Text style={[designSystemStyles.bodyText, {fontSize: 14, color: '#7c7c7c'}]}>
-            Created February 14th, 2023 - Last taken February 16th, 2023
+            Created {creation.toLocaleString('default', {dateStyle: 'full'})} - 
+            Last taken {lastTaken.toLocaleString('default', {dateStyle: 'full'})}
           </Text>
         </View>
         <PrimaryButton 
@@ -97,14 +93,3 @@ const QuizPreview = ({ navigation }) => {
 }
 
 export default QuizPreview
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'left',
-    justifyContent: 'center',
-    gap: 20,
-    padding: 50,
-  }
-})

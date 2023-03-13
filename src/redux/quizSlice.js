@@ -3,8 +3,6 @@ import { doc, Firestore, getDocs, getFirestore, Timestamp, updateDoc, collection
 import { getAuth } from "firebase/auth";
 
 const initialState = {
-  quizzes: [],
-
   docId: null,
   name: null,
   topic: null,
@@ -24,9 +22,10 @@ const deleteQuiz = createAsyncThunk(
 
 const updateLastTaken = createAsyncThunk(
   'quiz/updateLastTaken',
-  async({user, quiz}, thunkAPI) => {
+  async({ quiz }, thunkAPI) => {
     try {
-      const quizRef = doc(getFirestore(), 'users', user.docId, 'quizzes', quiz.docId);
+      const auth = getAuth();
+      const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
       const lastTaken = Timestamp.now();
       await updateDoc(quizRef, { lastTaken });
       return { lastTaken: lastTaken.toDate().toString()}
@@ -39,9 +38,10 @@ const updateLastTaken = createAsyncThunk(
 
 const resetProgress = createAsyncThunk(
   'quiz/resetProgress',
-  async({ user, quiz }, thunkAPI) => {
+  async({ quiz }, thunkAPI) => {
     try {
-      const quizRef = doc(getFirestore(), 'users', user.docId, 'quizzes', quiz.docId);
+      const auth = getAuth();
+      const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
       await updateDoc(quizRef, {
         lastQuestionIndex: 0,
         points: 0,
@@ -55,15 +55,12 @@ const resetProgress = createAsyncThunk(
 
 const updateProgress = createAsyncThunk(
   'quiz/updateProgress',
-  async({ user, quiz, questions, isCorrect}, thunkAPI) => {
+  async({ quiz, isCorrect}, thunkAPI) => {
     try {
-      const quizRef = doc(getFirestore(), 'users', user.docId, 'quizzes', quiz.docId);
+      const auth = getAuth();
+      const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
       await updateDoc(quizRef, {
-        lastQuestionIndex: (
-          quiz.lastQuestionIndex < questions.length - 1
-          ? quiz.lastQuestionIndex + 1
-          : 0 // Reset if the end is reached
-          ),
+        lastQuestionIndex: quiz.lastQuestionIndex + 1,
         points: isCorrect ? quiz.points + 1 : quiz.points,
       });
       return { isCorrect }

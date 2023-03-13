@@ -1,61 +1,53 @@
-import { StyleSheet, Text, View, Pressable} from 'react-native'
 import React, { useEffect } from 'react'
-
-import Icon from 'react-native-vector-icons/Ionicons';
-
-import { createVerticalNavigator } from '../../components'
 import AccountScreen from '../Account';
 import QuizStack from './QuizStack';
-import { getAuth } from 'firebase/auth';
+import { createVerticalNavigator } from '../../components'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-import { collection, doc, getDoc, getDocs, getFirestore } from 'firebase/firestore';
-
-import { loadUser } from '../../redux/userSlice';
+import { fetchUser } from '../../redux/userSlice';
 import { useDispatch } from 'react-redux';
-import { addQuiz, fetchQuizzes } from '../../redux/quizzesSlice';
+import { fetchQuizzes } from '../../redux/quizzesSlice';
 
 const Vertical = createVerticalNavigator();
+// const Tab = createBottomTabNavigator();
 
 const MainStack = () => {
-  const auth = getAuth();
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
+    dispatch(fetchUser());
     dispatch(fetchQuizzes());
+  })
 
-
-    const userDocRef = doc(getFirestore(), 'users', auth.currentUser.uid);
-    getDoc(userDocRef).then((result) => { 
-      if (result) {
-        const data = result.data();
-        // Convert Firestore Timestamp to primitive
-        data.creation = data.creation.toDate().toString();
-        // Add the document's id to the data
-        data['docId'] = result.id;
-        dispatch(loadUser(data));
-      }
-    });
-
-    /*
-    const quizzesColRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
-    getDocs(quizzesColRef).then((docs) => {
-      docs.forEach((doc) => {
-        console.log('doc.id: ', doc.id);
-        const data = doc.data()
-        // Convert Firestore Timestamps to strings
-        data.creation = data.creation.toDate().toString();
-        data.lastTaken = data.lastTaken.toDate().toString();
-        data['docId'] = doc.id;
-
-
-        dispatch(addQuiz(data))
-
-        console.log('doc.data: ', data);
-      })
-    });
-    */
-
-  }, [])
+  /*
+  if (false) {
+    return ( 
+      <Tab.Navigator 
+        initialRouteName='Quizzes'
+        screenOptions={{
+          tabBarShowLabel: false,
+          // tabBarActiveTintColor: '#F2BE5C',
+          // tabBarInactiveTintColor: 'white',
+          tabBarStyle: [{}, null]
+      }}
+      >
+        <Tab.Screen name="QuizStack" component={QuizStack} options={{
+          headerShown: false,
+          tabBarIcon: () => (<Icon name="pencil" color={'black'} size={25}/>)
+        }}/>
+        <Tab.Screen name="Account" component={AccountScreen} options={{
+          headerShown: false,
+          tabBarIcon: () => (<Icon name="person-circle-outline" color={'black'} size={25}/>)
+          }}/>
+        <Tab.Screen name="Help & Contact" component={AccountScreen} options={{
+          headerShown: false,
+          tabBarIcon: () => (<Icon name="mail-outline" color={'black'} size={25}/>)
+        }}/>
+      </Tab.Navigator>
+    )
+  }
+  */
 
   return (
     <Vertical.Navigator>
@@ -70,19 +62,7 @@ const MainStack = () => {
         tabBarIcon: <Icon name="mail-outline" color={'black'} size={25}/>
       }}/>
     </Vertical.Navigator>
-
   )
 }
 
 export default MainStack
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 20,
-  }
-
-})

@@ -5,27 +5,22 @@ import { GhostButton, PrimaryButton } from '../components'
 import { useDispatch, useSelector } from 'react-redux'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { updateProgress } from '../redux/quizSlice'
+import { toast } from 'react-hot-toast'
 
-const OptionCheckbox = ({ value, selection, viewingAnswer, answer, onPress }) => { 
+const OptionCheckbox = ({ value, answer, selection, viewingAnswer, onPress }) => { 
 
   return (
-    <View style={{
-      marginTop: 10, 
-      marginBottom: 10, 
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      gap: 10,
-      // Remain opaque if viewingAnswer AND the value is the answer
-      opacity: (viewingAnswer && value !== answer ? 0.5 : 1),
-      }}>
+    <View style={[
+      designSystemStyles.quizOption, 
+      {opacity: (viewingAnswer && value !== answer ? 0.5 : 1)}      
+    ]}>
 
       <TouchableOpacity 
-        style={{width: 25, height: 25, borderRadius: 5, borderColor: 'black', borderWidth: 2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center'}}
+        style={designSystemStyles.checkbox}
         onPress={() => { 
           console.log('clicked!'); 
           onPress() ;
         }}>       
-      
         { value === selection || ( viewingAnswer && value === answer) ? 
           <View style={{
             backgroundColor: (viewingAnswer 
@@ -33,7 +28,7 @@ const OptionCheckbox = ({ value, selection, viewingAnswer, answer, onPress }) =>
                 ? 'green'
                 : 'red'
                 )
-              : 'rgb(28, 37, 255)'
+              : '#1C25FF'
             ), 
             width: '100%', 
             alignItems: 'center', 
@@ -54,74 +49,64 @@ const OptionCheckbox = ({ value, selection, viewingAnswer, answer, onPress }) =>
 }
 
 
-const Quiz = ({ route, navigation }) => {
+const Quiz = ({ navigation }) => {
   const dispatch = useDispatch();
-
-  const user = useSelector((state) => state.user)
   const quiz = useSelector((state) => state.quiz);
   const questions = useSelector((state) => state.questions.questions);
   const question = questions[quiz.lastQuestionIndex];
 
+  // Keep the options in a React State since the screen reloads on every action
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [viewingAnswer, setViewingAnswer] = useState(false);
   const [selection, setSelection] = useState('');
-  
-  const isCorrect = question.answer == selection;
+
+  // Calculate the ratio of the last question's index to the total number of questions
+  const progress = Number((quiz.lastQuestionIndex/questions.length*100)).toPrecision(3);
+  const isCorrect = question.answer === selection;
+
   console.log('question.answer: ', question.answer);
   console.log('selection: ', selection);
   console.log('isCorrect: ', isCorrect);
-
+  console.log('quiz: ', quiz);
+  console.log('questions: ', questions);
   
   useEffect(() => {
     setShuffledOptions(
-      [...question.options, question.answer].sort((a, b) => 0.5 - Math.random())
+      [...question.options, question.answer].sort(() => 
+        // Sort the elements randomly
+        (0.5 - Math.random())
+      )
     )
   }, [question])
   
-
-
-  console.log('user: ', user);
-  console.log('quiz: ', quiz);
-  console.log('questions: ', questions);
-
-  
-  // The ratio of answered questions to total question
-  const progress = Number((quiz.lastQuestionIndex)/questions.length*100).toPrecision(3);
-
-
-  
   const onCheck = () => {
-    if (selection !== '') {
-      setViewingAnswer(true);
-      console.log('isCorrect: ', isCorrect);
-    } else {
-      console.log('NO ANSWER SELECTED');
+    if (selection === '') {
+      toast('Select an answer!', {icon: '🤗'})
+      return
     }
+    setViewingAnswer(true);
   }
 
-  const onNext = () => {
-    dispatch(updateProgress({user, quiz, questions, isCorrect}))
+  const onNext = async () => {
+    await dispatch(updateProgress({ quiz, isCorrect }))
     setViewingAnswer(false);
     setSelection('');
 
-    // If the user reached the end
+    // If the user reaches the end, send to Quiz Preview
     if (!(quiz.lastQuestionIndex < questions.length - 1)) {
       navigation.navigate('QuizPreview');
     }
   }
-
-  // Shuffle the options and list them out after
-
   
   return (
     <View style={designSystemStyles.container}>
-       <View>
-        <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>{quiz.name}</Text>
+      <View>
+        <Text style={[designSystemStyles.bigHeadingBold]}>{quiz.name}</Text>
         <Text style={[designSystemStyles.subHeading, {color: '#7c7c7c'}]}>{quiz.topic}</Text>
       </View>
       <View style={{gap: 10}}>
         <Text style={designSystemStyles.bodyText}>
-          Progress: {(quiz.lastQuestionIndex + 1)} out of {questions.length} questions
+          Progress: {quiz.lastQuestionIndex} out of {questions.length} questions
         </Text>
         <View style={designSystemStyles.progressBar}>
           <View style={[ designSystemStyles.progressFill, {width: `${progress}%`}]}/>
@@ -129,17 +114,25 @@ const Quiz = ({ route, navigation }) => {
       </View>
       <View style={designSystemStyles.separator}/>
       <View style={{flex: 1, gap: 20}}>
-        <Text style={designSystemStyles.subHeading}>{ question.question }</Text>
+        <Text style={designSystemStyles.subHeading}>
+          Question {quiz.lastQuestionIndex + 1}: {question.question}
+        </Text>
         <FlatList
           data={shuffledOptions}
           renderItem={({item}) => 
-            <OptionCheckbox value={item} selection={selection} viewingAnswer={viewingAnswer} answer={question.answer} onPress={() => { 
-              if (!viewingAnswer) {
-                selection === item ? setSelection('') : setSelection(item);
-              }
-            }}/>
+            <OptionCheckbox 
+              value={item} 
+              answer={question.answer} 
+              selection={selection} 
+              viewingAnswer={viewingAnswer}  
+              onPress={() => { 
+                if (!viewingAnswer) {
+                  selection === item ? setSelection('') : setSelection(item);
+                }
+              }}
+            />
           }
-          style={{ marginTop: -10, marginBottom: -10, flexGrow: 0,}}
+          style={{ marginTop: -10, marginBottom: -10, flexGrow: 0}}
         />
         {viewingAnswer ? 
           <View style={{gap: 20}}>
@@ -159,7 +152,6 @@ const Quiz = ({ route, navigation }) => {
                   ? 'Hooray! The answer is:'
                   : 'Woops! The answer is:'
                 }
-
               </Text>
               <Text style={designSystemStyles.bodyText}>{question.answer}</Text>
             </View>

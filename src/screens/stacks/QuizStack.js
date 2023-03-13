@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet } from 'react-native'
 import React, { useEffect } from 'react'
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,7 +8,7 @@ import EditQuizScreen from '../EditQuiz';
 import QuizPreviewScreen from '../QuizPreview';
 import QuizScreen from '../Quiz';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchQuizzes, reflectQuizUpdates } from '../../redux/quizzesSlice';
+import { reflectQuizUpdates } from '../../redux/quizzesSlice';
 
 const Stack = createNativeStackNavigator();
 const defaultScreenOptions = {headerShown: false,  animation: 'none'};
@@ -18,7 +18,6 @@ const QuizStack = () => {
   const quiz = useSelector((state) => state.quiz);
 
   useEffect(() => {
-    console.log('reflecting changes');
     dispatch(reflectQuizUpdates({ quiz }))
   }, [quiz])
 

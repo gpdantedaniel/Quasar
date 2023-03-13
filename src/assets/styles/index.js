@@ -115,6 +115,23 @@ const designSystemStyles = StyleSheet.create({
     boxShadow: 'none',
     border: '1px solid #c7c7c7',
     borderRadius: '10px',
+  },
+  quizOption: {
+    marginTop: 10, 
+    marginBottom: 10, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 10,
+  },
+  checkbox: {
+    width: 25, 
+    height: 25, 
+    borderRadius: 5, 
+    borderColor: 'black', 
+    borderWidth: 2, 
+    overflow: 'hidden', 
+    alignItems: 'center', 
+    justifyContent: 'center'
   }
 })
 
