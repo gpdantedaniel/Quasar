@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { GhostButton, GhostTextInput, PrimaryButton } from './src/components';
-
+import { Text, View } from 'react-native';
 
 import { useFonts } from 'expo-font';
 import designSystemStyles from './src/assets/styles/index'
@@ -11,7 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LoginScreen from './src/screens/Login'
 import SignUpScreen from './src/screens/SignUp';
-import PasswordRecoveryScreen from './src/screens/PasswordRecovery';
+import PasswordReset from './src/screens/PasswordReset';
 import EmailSentScreen from './src/screens/EmailSent';
 import MainStack from './src/screens/stacks/MainStack';
 
@@ -108,19 +105,9 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name='Login' component={LoginScreen} options={defaultScreenOptions}/>
         <Stack.Screen name='SignUp' component={SignUpScreen} options={defaultScreenOptions}/>
-        <Stack.Screen name='PasswordRecovery' component={PasswordRecoveryScreen} options={defaultScreenOptions}/>
+        <Stack.Screen name='PasswordReset' component={PasswordReset} options={defaultScreenOptions}/>
         <Stack.Screen name='EmailSent' component={EmailSentScreen} options={defaultScreenOptions}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 20,
-  },
-});

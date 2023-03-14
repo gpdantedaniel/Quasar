@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import AccountScreen from '../Account';
+import AccountStack from './AccountStack';
 import QuizStack from './QuizStack';
 import { createVerticalNavigator } from '../../components'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -55,10 +55,11 @@ const MainStack = () => {
         title: 'Quizzes',
         tabBarIcon: <Icon name="pencil" color={'black'} size={25}/>
       }}/>
-      <Vertical.Screen name="Account" component={AccountScreen} options={{
+      <Vertical.Screen name="AccountStack" component={AccountStack} options={{
+        title: 'Account',
         tabBarIcon: <Icon name="person-circle-outline" color={'black'} size={25}/>
         }}/>
-      <Vertical.Screen name="Help & Contact" component={AccountScreen} options={{
+      <Vertical.Screen name="Help & Contact" component={AccountStack} options={{
         tabBarIcon: <Icon name="mail-outline" color={'black'} size={25}/>
       }}/>
     </Vertical.Navigator>

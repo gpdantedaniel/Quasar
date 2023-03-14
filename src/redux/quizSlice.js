@@ -92,22 +92,14 @@ export const quizSlice = createSlice({
     loadQuiz: (state, action) => {
       state = Object.assign(state, action.payload.quiz);
     },
-    // Update name, topic, and description
-    updateDescriptors: () => {},
-    // Update lastQuestionIndex and points
-    updateProgressIdentifiers: () => {},
-    // Add questions to the quiz
-    addQuestions: (state, action) => { state.questions = [...state.questions, action.payload] },
-
-    // Clear the currently stored quiz
     clearQuiz: (state) => {
+      console.log('clear');
       state = initialState
     },
 
   },
 
   extraReducers: (builder) => {
-
     builder.addCase(setDescriptors.fulfilled, (state, action) => {
       state.name = action.payload.descriptors.name;
       state.topic = action.payload.descriptors.topic;
@@ -136,7 +128,6 @@ export const {
   updateName, 
   updateTopic, 
   updateDescription, 
-  addQuestions,
   clearQuiz
 } = quizSlice.actions;
 

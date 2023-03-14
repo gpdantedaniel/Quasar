@@ -84,15 +84,17 @@ export const quizzesSlice = createSlice({
     addQuiz: (state, action) => {
       state.quizzes = [...state.quizzes, action.payload];
     },
-
     reflectQuizUpdates: (state, action) => {
       const index = state.quizzes.findIndex(quiz => quiz.docId == action.payload.quiz.docId);
       state.quizzes[index] = action.payload.quiz;
     },
-
     deleteQuizFromQuizzes: (state, action) => {
       const index = state.quizzes.findIndex(quiz => quiz.docId == action.payload.quiz.docId);
       state.quizzes[index] = action.payload.quiz;
+    },
+    clearQuizzes: (state, action) => {
+      console.log('clear');
+      state = initialState;
     }
   },
 
@@ -113,7 +115,7 @@ export const quizzesSlice = createSlice({
   }
 })
 
-export const { addQuiz, reflectQuizUpdates } = quizzesSlice.actions;
+export const { addQuiz, reflectQuizUpdates, clearQuizzes } = quizzesSlice.actions;
 
 export { fetchQuizzes, createQuiz, deleteQuiz }
 

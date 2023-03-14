@@ -33,5 +33,3 @@ const QuizStack = () => {
 }
 
 export default QuizStack
-
-const styles = StyleSheet.create({})

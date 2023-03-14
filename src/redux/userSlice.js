@@ -33,12 +33,8 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // Load user information
-    loadUser: (state, { payload }) => {
-      state = Object.assign(state, payload)
-    },
-
     clearUser: (state) => {
+      console.log('clear');
       state = initialState;
     }
   } ,
@@ -52,7 +48,7 @@ export const userSlice = createSlice({
   }
 })
 
-export const { loadUser, clearUser } = userSlice.actions;
+export const { clearUser } = userSlice.actions;
 
 export { fetchUser }
 

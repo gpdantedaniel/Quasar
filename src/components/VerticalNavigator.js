@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, Pressable, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { NavigationHelpersContext, useNavigationBuilder, createNavigatorFactory, TabRouter, TabActions} from '@react-navigation/native';
 import designSystemStyles from '../assets/styles';
@@ -8,21 +8,29 @@ import { getAuth, signOut } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../redux/userSlice';
 import { clearQuiz } from '../redux/quizSlice';
+import { clearQuizzes } from '../redux/quizzesSlice';
+import { clearQuestions } from '../redux/questionsSlice';
 
 function VerticalNavigator({initialRouteName, children, screenOptions, tabBarStyle, contentStyle}) {
-  const { state, navigation, descriptors, NavigationContent } = useNavigationBuilder(TabRouter, {
+  const dispatch = useDispatch();
+  const { 
+    state, 
+    navigation, 
+    descriptors, 
+    NavigationContent 
+  } = useNavigationBuilder(TabRouter, {
     children,
     screenOptions,
     initialRouteName,
   });
 
-  const dispatch = useDispatch();
-  
   const onSignout = () => {
     const auth = getAuth();
     signOut(auth).then(() => {
       dispatch(clearUser());
+      dispatch(clearQuizzes());
       dispatch(clearQuiz());
+      dispatch(clearQuestions());
     }).catch((error) => {
       console.log(error);
     });
@@ -43,6 +51,7 @@ function VerticalNavigator({initialRouteName, children, screenOptions, tabBarSty
             {state.routes.map((route) => (
               <TouchableOpacity
                 key={route.key}
+                style={styles.tab}
                 onPress={() => {
                   const event = navigation.emit({
                     type: 'tabPress',
@@ -56,9 +65,7 @@ function VerticalNavigator({initialRouteName, children, screenOptions, tabBarSty
                       target: state.key,
                     });
                   }
-                }}
-                style={{ flex: 1, flexDirection: 'row', alignItems: 'center'}}
-              >
+                }}>
                 {descriptors[route.key].options.tabBarIcon}
                 <Text style={[designSystemStyles.bodyText, {marginLeft: 5}]}>
                   {descriptors[route.key].options.title || route.name}
@@ -66,12 +73,10 @@ function VerticalNavigator({initialRouteName, children, screenOptions, tabBarSty
               </TouchableOpacity>
             ))}
           </View>
-
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center'}} onPress={() => onSignout()}>
+          <TouchableOpacity style={styles.tab} onPress={() => onSignout()}>
             <Icon name='exit-outline' color='black' size={25}/>
             <Text style={[designSystemStyles.bodyText, {marginLeft: 5}]}>Log Out</Text>
           </TouchableOpacity>
-
         </View>
 
         <View style={[styles.displayedScreen, contentStyle]}>
@@ -114,6 +119,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     flexDirection: 'row',
+  },
+  
+  tab: {
+    flexDirection: 'row', 
+    alignItems: 'center',
   }
 })
 

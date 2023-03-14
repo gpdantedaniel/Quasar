@@ -72,6 +72,7 @@ export const questionsSlice = createSlice({
   initialState,
   reducers: {
     clearQuestions: (state, action) => {
+      console.log('clear');
       state = initialState;
     }
   },

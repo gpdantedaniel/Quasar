@@ -18,6 +18,10 @@ const designSystemStyles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     fontSize: 21,
   },
+  headingBold: {
+    fontFamily: 'Inter-Bold',
+    fontSize: 21,
+  },
   bigHeading: {
     fontFamily: 'Inter-Regular',
     fontSize: 24,
@@ -55,6 +59,20 @@ const designSystemStyles = StyleSheet.create({
     justifyContent: 'center',
     gap: 20,
     padding: 50,
+  },
+  flexCentered: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    textAlign: 'center',
+    gap: 20, 
+  },
+  contentColumn: {
+    width: 300,
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    textAlign: 'center', 
+    gap: 20
   },
   progressBar: {
     height: 20,

@@ -19,31 +19,22 @@ const Login = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={{flex: 1, justifyContent: 'center', gap: 20, alignItems: 'center'}}>
-        <View style={{gap: 10}}>
-          <Image style={{width: 200, height: 40}} source={require('../assets/images/quasar_logo.png')}/>
-          <Text style={designSystemStyles.heading}>Studying Made Easy</Text>
+    <View style={designSystemStyles.container}>
+      <View style={designSystemStyles.flexCentered}>
+        <View style={designSystemStyles.contentColumn}>
+          <View style={{gap: 10}}>
+            <Image style={{width: 200, height: 40}} source={require('../assets/images/quasar_logo.png')}/>
+            <Text style={designSystemStyles.heading}>Studying Made Easy</Text>
+          </View>
+            <TextInput placeholder={'Email'} style={designSystemStyles.GhostTextInput} onChangeText={(email) => setEmail(email)}/>
+            <TextInput placeholder={'Password'} style={designSystemStyles.GhostTextInput} onChangeText={(password) => setPassword(password)} secureTextEntry={true}/>
+            <PrimaryButton title={'Login'} onPress={() => onLogin()}/>
+            <Text style={{...designSystemStyles.bodyText, textDecorationLine: 'underline'}} onPress={() => navigation.navigate('PasswordReset')}>Forgot Password?</Text>
         </View>
-
-        <TextInput placeholder={'Email'} style={designSystemStyles.GhostTextInput} onChangeText={(email) => setEmail(email)}/>
-        <TextInput placeholder={'Password'} style={designSystemStyles.GhostTextInput} onChangeText={(password) => setPassword(password)} secureTextEntry={true}/>
-        <PrimaryButton title={'Login'} onPress={() => onLogin()}/>
-        <Text style={{...designSystemStyles.bodyText, textDecorationLine: 'underline'}} onPress={() => navigation.navigate('PasswordRecovery')}>Forgot Password?</Text>
       </View>
-      <GhostButton style={{marginBottom: 40,}} title='Create account' onPress={() => navigation.navigate('SignUp')}/>
+      <GhostButton style={{alignSelf: 'center'}} title='Create account' onPress={() => navigation.navigate('SignUp')}/>
     </View>
   )
 }
 
 export default Login
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 20,
-  }
-})

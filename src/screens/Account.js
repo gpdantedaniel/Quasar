@@ -4,38 +4,29 @@ import designSystemStyles from '../assets/styles'
 import { GhostButton } from '../components'
 
 import { useSelector } from 'react-redux'
-import { selectUserState } from '../redux/userSlice'
+import Icon from 'react-native-vector-icons/Ionicons'
 
-const Account = () => {
+const Account = ({ navigation }) => {
   const user = useSelector((state) => state.user);
 
-  if (user) {
-    return (
-      <View style={styles.container}>
-        <Text style={{...designSystemStyles.heading, fontFamily: 'Inter-Bold',}}>My Account</Text> 
-        <View style={{gap: 10,}}>
-          <Text style={designSystemStyles.bodyText}>First name: {user.firstName}</Text>
-          <Text style={designSystemStyles.bodyText}>Last name: {user.lastName}</Text>
-          <Text style={designSystemStyles.bodyText}>Email: {user.email}</Text>
+  return (
+    <View style={designSystemStyles.container}>
+      <View style={designSystemStyles.flexCentered}>
+        <View style={designSystemStyles.contentColumn}>
+          <View style={{gap: 10}}>
+            <Icon name={'person-circle-outline'} size={120} color={'black'}/>
+            <Text style={designSystemStyles.headingBold}>My account</Text>
+            <Text style={designSystemStyles.bodyText}>{user.firstName} {user.lastName}</Text>
+            <Text style={designSystemStyles.bodyText}>{user.email}</Text>
+          </View>
+          <GhostButton title='Change Password' onPress={() => navigation.navigate('PasswordResetAuth')}/>
+          <GhostButton title='Delete Account' onPress={() => navigation.navigate('DeleteAccount')}/>
         </View>
-        <GhostButton title='Change Password'/>
-        <GhostButton title='Delete Account'/>
       </View>
-    )
-  }
+    </View>
+  )
 }
 
  
 
 export default Account
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'left',
-    justifyContent: 'center',
-    gap: 20,
-    padding: 50,
-  }
-})
