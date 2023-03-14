@@ -1,14 +1,15 @@
-import { StyleSheet, Text, View, CheckBox, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import designSystemStyles from '../assets/styles'
+import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native'
 import { GhostButton, PrimaryButton } from '../components'
-import { useDispatch, useSelector } from 'react-redux'
+import designSystemStyles from '../assets/styles'
 import Icon from 'react-native-vector-icons/Ionicons'
+
+import { useDispatch, useSelector } from 'react-redux'
 import { updateProgress } from '../redux/quizSlice'
+
 import { toast } from 'react-hot-toast'
 
 const OptionCheckbox = ({ value, answer, selection, viewingAnswer, onPress }) => { 
-
   return (
     <View style={[
       designSystemStyles.quizOption, 
@@ -18,7 +19,6 @@ const OptionCheckbox = ({ value, answer, selection, viewingAnswer, onPress }) =>
       <TouchableOpacity 
         style={designSystemStyles.checkbox}
         onPress={() => { 
-          console.log('clicked!'); 
           onPress() ;
         }}>       
         { value === selection || ( viewingAnswer && value === answer) ? 
@@ -48,7 +48,6 @@ const OptionCheckbox = ({ value, answer, selection, viewingAnswer, onPress }) =>
   )
 }
 
-
 const Quiz = ({ navigation }) => {
   const dispatch = useDispatch();
   const quiz = useSelector((state) => state.quiz);
@@ -63,12 +62,6 @@ const Quiz = ({ navigation }) => {
   // Calculate the ratio of the last question's index to the total number of questions
   const progress = Number((quiz.lastQuestionIndex/questions.length*100)).toPrecision(3);
   const isCorrect = question.answer === selection;
-
-  console.log('question.answer: ', question.answer);
-  console.log('selection: ', selection);
-  console.log('isCorrect: ', isCorrect);
-  console.log('quiz: ', quiz);
-  console.log('questions: ', questions);
   
   useEffect(() => {
     setShuffledOptions(
@@ -88,16 +81,18 @@ const Quiz = ({ navigation }) => {
   }
 
   const onNext = async () => {
+    // If the maximum index has been reached
+    if (quiz.lastQuestionIndex >= (questions.length - 1)) {
+      navigation.navigate('QuizPreview');
+    } 
+
+    // Be very careful here, effects on state must come after changing screen
+    // Otherwise, an index out of boundaries error may occurr at the end
     await dispatch(updateProgress({ quiz, isCorrect }))
     setViewingAnswer(false);
     setSelection('');
-
-    // If the user reaches the end, send to Quiz Preview
-    if (!(quiz.lastQuestionIndex < questions.length - 1)) {
-      navigation.navigate('QuizPreview');
-    }
   }
-  
+
   return (
     <View style={designSystemStyles.container}>
       <View>

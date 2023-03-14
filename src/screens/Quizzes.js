@@ -74,7 +74,7 @@ const Quizzes = ({ navigation }) => {
             No quizzes around here yet...
           </Text>
           <Text style={designSystemStyles.subHeading}>
-            Start by creating your first quiz!
+            Start by creating your a quiz!
           </Text>
         </View>
         <PrimaryButton title='+ Create quiz' onPress={() => navigation.navigate('QuizCreation')}/>

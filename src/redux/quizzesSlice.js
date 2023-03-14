@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { collection, getFirestore, query, orderBy, getDocs, Timestamp, addDoc } from 'firebase/firestore';
+import { collection, getFirestore, query, orderBy, getDocs, Timestamp, addDoc, doc } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const fetchQuizzes = createAsyncThunk(
   'quizzes/fetchQuizzes',
@@ -56,6 +58,21 @@ const createQuiz = createAsyncThunk(
 )
 
 
+const deleteQuiz = createAsyncThunk(
+  'quiz/deleteQuiz',
+  async({ quiz }, thunkAPI) => {
+    try {
+      const functions = getFunctions(getApp());
+      const deleteQuizRecursively = httpsCallable(functions, 'deleteQuiz');
+      await deleteQuizRecursively({ quiz });
+      return { quiz }
+    } catch(error) {
+      console.log(error);
+    }
+  }
+)
+
+
 const initialState = {
   quizzes: [],
 };
@@ -89,11 +106,15 @@ export const quizzesSlice = createSlice({
       console.log('action.payload: ', action.payload);
       state.quizzes.push(action.payload);
     })
+
+    builder.addCase(deleteQuiz.fulfilled, (state, action) => {
+      state.quizzes = state.quizzes.filter(quiz => quiz.docId !== action.payload.quiz.docId)
+    })
   }
 })
 
-export const { addQuiz, reflectQuizUpdates} = quizzesSlice.actions;
+export const { addQuiz, reflectQuizUpdates } = quizzesSlice.actions;
 
-export { fetchQuizzes, createQuiz }
+export { fetchQuizzes, createQuiz, deleteQuiz }
 
 export default quizzesSlice.reducer;

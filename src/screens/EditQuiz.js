@@ -1,35 +1,57 @@
-import { StyleSheet, Text, View, TextInput, ScrollView, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity } from 'react-native'
+import { GhostButton } from '../components'
 import designSystemStyles from '../assets/styles'
-import { GhostButton, PrimaryButton } from '../components'
 import Icon from 'react-native-vector-icons/Ionicons'
-import { getAuth } from 'firebase/auth'
-import { addDoc, collection, doc, getDocs, getFirestore, setDoc, updateDoc } from 'firebase/firestore'
+
 import { useDispatch, useSelector } from 'react-redux'
-import { addQuestion, updateQuestion } from '../redux/questionsSlice'
-import { setDescriptors } from '../redux/quizSlice'
+import { addQuestion, deleteQuestion, updateQuestion } from '../redux/questionsSlice'
+import { resetProgress, setDescriptors } from '../redux/quizSlice'
+
 import { toast } from 'react-hot-toast'
 
-
-const QuestionView = ({ data, user, quiz, dispatch }) => {
-  const [question, setQuestion] = useState(data.question);
-  const [answer, setAnswer] = useState(data.answer);
-  const [options, setOptions] = useState(data.options.join(';'));
+const QuestionView = ({ quiz, question }) => {
+  const dispatch = useDispatch();
+  // A distinction needs to be made between questionText and the question Object for now
+  const [questionText, setQuestionText] = useState(question.question);
+  const [answer, setAnswer] = useState(question.answer);
+  const [options, setOptions] = useState(question.options.join(';'));
   const [modified, setModified] = useState(false);
 
   const onSave = async () => {
+    // For now, separating options by semicolons will suffice
+    const splitOptions = options.split(';')
+    .map((option) => option.trim())
+    .filter((option) => option !== '')
     const update = {
-      question,
+      question: questionText,
       answer, 
-      options: options.split(';')
+      options: splitOptions
     };
-
-    const saved = dispatch(updateQuestion({user, quiz, docId: data.docId, data: update}))
-    saved.then(() => setModified(false));
+    
+    const saved = dispatch(updateQuestion({ quiz, question, update}))
+    saved.then(() => {
+      // Reload the options in case of unseen changes
+      setOptions(splitOptions.join(';'))
+      setModified(false)
+    });
     toast.promise(saved, {
       loading: 'Saving...',
       success: 'Changes saved!',
-      error: 'Could not save',
+      error: 'Could not save changes',
+    })
+  }
+
+  const onDelete = () => {
+    // Reset the progress as well in case of out-of-boundaries index
+    const deleted = Promise.all([
+      dispatch(deleteQuestion({ quiz, question })),
+      dispatch(resetProgress({ quiz }))
+    ])
+    toast.promise(deleted, {
+      loading: 'Deleting question...',
+      success: 'Question deleted!',
+      error: "Could not delete question"
     })
   }
 
@@ -41,8 +63,8 @@ const QuestionView = ({ data, user, quiz, dispatch }) => {
           <View style={{flexDirection: 'row', gap: 20}}>
             <View>
               <Text style={designSystemStyles.bodyTextSmall}>Question</Text>
-              <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={question} onChangeText={(question) => {
-                setQuestion(question); setModified(true);
+              <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={questionText} onChangeText={(questionText) => {
+                setQuestionText(questionText); setModified(true);
               }}/>
 
             </View>
@@ -62,13 +84,19 @@ const QuestionView = ({ data, user, quiz, dispatch }) => {
 
         </View>
         <View style={{justifyContent: 'space-between', alignItems: 'flex-end', width: 150,}}>
-          <Icon name={'trash-outline'} size={30} color={'black'}/>
-          <GhostButton title='Save' style={{width: 150, opacity: modified ? 1.0 : 0}} onPress={() => {
-            if (modified) {
-              onSave();
-              setModified(false);
-            }
-          }}/>
+          <TouchableOpacity onPress={() => onDelete()}>
+            <Icon name={'trash-outline'} size={30} color={'black'}/>
+          </TouchableOpacity>
+          <GhostButton title='Save' 
+            style={{width: 150, opacity: modified ? 1.0 : 0}} 
+            disabled={!modified}
+            onPress={() => {
+              if (modified) {
+                onSave();
+                setModified(false);
+              }
+            }}
+          />
         </View>
       </View>
     </View>
@@ -77,12 +105,11 @@ const QuestionView = ({ data, user, quiz, dispatch }) => {
 
 
 const EditQuiz = ({ navigation }) => {
-  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const quiz = useSelector((state) => state.quiz);
   const questions = useSelector((state) => state.questions.questions);
 
-  const dispatch = useDispatch();
-
+  // All descriptors are set in states
   const [name, setName] = useState(quiz.name);
   const [topic, setTopic] = useState(quiz.topic);
   const [description, setDescription] = useState(quiz.description);  
@@ -100,15 +127,15 @@ const EditQuiz = ({ navigation }) => {
   }
 
   const onAddQuestion = () => {
-    const result = dispatch(addQuestion({user, quiz, data: {
-      question: "New question",
-      answer: "answer",
-      options: ["option1", "option2", "option3", "option4"]
+    const creation = dispatch(addQuestion({ quiz, data: {
+      question: "A generic question",
+      answer: "A generic answer",
+      options: ["False option 1", "False option 2", "False option 3", "False option 4"]
     }}))
 
-    toast.promise(result, {
-      loading: 'Creating question...',
-      success: 'Question created!',
+    toast.promise(creation, {
+      loading: 'Adding question...',
+      success: 'Question added!',
       error: 'Could not create question'
     })
   }
@@ -143,6 +170,7 @@ const EditQuiz = ({ navigation }) => {
         <GhostButton 
           title='Save' 
           style={{width: 150, opacity: descriptorsModified ? 1.0 : 0}} 
+          disabled={!descriptorsModified}
           onPress={() => onSaveDescriptors()}
         />
       </View>     
@@ -151,18 +179,13 @@ const EditQuiz = ({ navigation }) => {
           <Text style={designSystemStyles.heading}>Questions</Text>
           <GhostButton title='+ Add Question' style={{width: 200}} onPress={() => onAddQuestion()}/>
         </View>
-
         <FlatList
           data={questions}
-          renderItem={({item}) => <QuestionView data={item} user={user} quiz={quiz} dispatch={dispatch}/> }
-          style={{ paddingRight: 20, borderRadius: 10}}
+          renderItem={({item}) => <QuestionView quiz={quiz} question={item}/> }
+          style={designSystemStyles.listView}
         />
-
       </View>
-
-      <View style={{flexDirection: 'row', gap: 24}}>
-        <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack()}/>
-      </View>
+      <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack()}/>
     </View>
   )
 }

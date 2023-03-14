@@ -1,9 +1,9 @@
 import {Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
 
-const GhostButton = ({title, style, onPress}) => {
+const GhostButton = ({title, style, disabled, onPress}) => {
   return (
-    <TouchableOpacity style={{...styles.primaryButton, ...style}} onPress={onPress}>
+    <TouchableOpacity style={{...styles.primaryButton, ...style}} disabled={disabled} onPress={onPress}>
       <Text style={styles.primaryButtonText}>{title}</Text>
     </TouchableOpacity>
   )

@@ -132,6 +132,15 @@ const designSystemStyles = StyleSheet.create({
     overflow: 'hidden', 
     alignItems: 'center', 
     justifyContent: 'center'
+  },
+  panel: {
+    gap: 10, 
+    alignSelf: 'baseline', 
+    padding: 20, 
+    borderRadius: 10, 
+    borderWidth: 1, 
+    borderColor: '#c7c7c7', 
+    backgroundColor: '#f7f7f7',
   }
 })
 

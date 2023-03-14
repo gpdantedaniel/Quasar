@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import { doc, Firestore, getDocs, getFirestore, Timestamp, updateDoc, collection, query, orderBy, addDoc } from 'firebase/firestore'
 import { getAuth } from "firebase/auth";
+import { getFunctions, httpsCallable } from 'firebase/functions'
+import { getApp } from 'firebase/app'
 
 const initialState = {
   docId: null,
@@ -12,13 +14,6 @@ const initialState = {
   lastQuestionIndex: null,
   points: null,
 }
-
-const deleteQuiz = createAsyncThunk(
-  'quiz/deleteQuiz',
-  async({user, quiz}, thunkAPI) => {
-
-  }
-)
 
 const updateLastTaken = createAsyncThunk(
   'quiz/updateLastTaken',
@@ -132,6 +127,7 @@ export const quizSlice = createSlice({
     builder.addCase(updateLastTaken.fulfilled, (state, action) => {
       state.lastTaken = action.payload.lastTaken
     })
+
   }
 })
 
