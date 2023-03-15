@@ -67,6 +67,26 @@ const QuizCreation = ({ navigation }) => {
     }
   }
 
+  const onCreateFromScratch = () => {
+    const descriptors = {
+      name: "New quiz",
+      topic: "A generic topic",
+      description: "A generic description"
+    }
+
+    const creation = dispatch(createQuiz({ descriptors }));
+    creation.then(async({ payload }) => {
+      await dispatch(loadQuiz({quiz: payload}));
+      navigation.navigate('QuizPreview');
+    })
+   
+    toast.promise(creation, {
+      loading: 'Creating quiz',
+      success: 'Quiz ready!',
+      error: 'Could not generate quiz. Try again later'
+    })
+  }
+
 
   if (processing) { return (
     <View style={designSystemStyles.container}>
@@ -95,7 +115,7 @@ const QuizCreation = ({ navigation }) => {
       />
       <View style={{flexDirection: 'row', gap: 20}}>
         <PrimaryButton title='Submit' style={{width: 200}} onPress={() => onCreateQuiz()}/>
-        <GhostButton title='Create from scratch' style={{width: 200}}/>
+        <GhostButton title='Create from scratch' style={{width: 200}} onPress={() => onCreateFromScratch()}/>
       </View>
       <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack()}/>
     </View> 

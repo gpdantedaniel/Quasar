@@ -18,6 +18,15 @@ const QuestionView = ({ quiz, question }) => {
   const [options, setOptions] = useState(question.options.join(';'));
   const [modified, setModified] = useState(false);
 
+  useEffect(() => {
+    // IMPORTANT: Reset the state values explicitly
+    // Otherwise, they will persist despite "question" updating
+    setQuestionText(question.question);
+    setAnswer(question.answer);
+    setOptions(question.options.join(';'));
+    setModified(false);
+  }, [question])
+
   const onSave = async () => {
     // For now, separating options by semicolons will suffice
     const splitOptions = options.split(';')
@@ -107,7 +116,7 @@ const QuestionView = ({ quiz, question }) => {
 const EditQuiz = ({ navigation }) => {
   const dispatch = useDispatch();
   const quiz = useSelector((state) => state.quiz);
-  const questions = useSelector((state) => state.questions.questions);
+  const questions =  useSelector((state) => state.questions.questions);
 
   // All descriptors are set in states
   const [name, setName] = useState(quiz.name);
@@ -130,7 +139,7 @@ const EditQuiz = ({ navigation }) => {
     const creation = dispatch(addQuestion({ quiz, data: {
       question: "A generic question",
       answer: "A generic answer",
-      options: ["False option 1", "False option 2", "False option 3", "False option 4"]
+      options: ["False option 1", "False option 2", "False option 3"]
     }}))
     toast.promise(creation, {
       loading: 'Adding question...',

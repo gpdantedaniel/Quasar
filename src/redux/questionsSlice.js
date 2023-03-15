@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAuth } from "firebase/auth";
-import { collection, doc, getDocs, getFirestore, updateDoc, addDoc, deleteDoc } from "firebase/firestore";
+import { collection, doc, getDocs, getFirestore, updateDoc, addDoc, deleteDoc, Timestamp, query, orderBy } from "firebase/firestore";
 
 // AsyncThunk functions
 const fetchQuestions = createAsyncThunk(
@@ -9,8 +9,15 @@ const fetchQuestions = createAsyncThunk(
     try {
       const auth = getAuth();
       const questionsRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId, 'questions');
-      const querySnapshot = await getDocs(questionsRef);
-      const questions = querySnapshot.docs.map((doc) => ({...doc.data(), docId: doc.id}));
+      // Fetch questions by ascending chronological order
+      const q = query(questionsRef, orderBy('creation', 'asc'));
+      const querySnapshot = await getDocs(q);
+      const questions = querySnapshot.docs.map((doc) => {
+        const question = doc.data();
+        question.creation = question.creation.toDate().toString();
+        question.docId = doc.id;
+        return question
+      });
       return questions
 
     } catch(error) {
@@ -24,10 +31,17 @@ const addQuestion = createAsyncThunk(
   'questions/addQuestion',
   async({ quiz, data }, thunkAPI) => {
     try{
+      // Generate a creation Timestamp to fetch chronologically
+      const creation = Timestamp.now();
+      data.creation = creation;
       const auth = getAuth();
       const questionsRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId, 'questions');
       const docRef = await addDoc(questionsRef, data);
-      return {docId: docRef.id, ...data}
+      // Conver the Timestamp to String and add docId
+      data.creation = creation.toDate().toString();
+      data.docId = docRef.id;
+      // "data" is the question Object itself
+      return data
     } catch(error) {
       console.log(error)
     }
@@ -78,6 +92,7 @@ export const questionsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchQuestions.fulfilled, (state, action) => {
+      // The questions are chronologically ordered
       state.questions = action.payload;
     })
 
@@ -95,6 +110,7 @@ export const questionsSlice = createSlice({
 
     builder.addCase(deleteQuestion.fulfilled, (state, action) => {
       // Remove the question specifically by docId
+      console.log('question to delete: ', action.payload.question.docId);
       state.questions = state.questions.filter(question => question.docId !== action.payload.question.docId)
     })
   }
