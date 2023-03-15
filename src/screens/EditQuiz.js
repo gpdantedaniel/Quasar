@@ -193,7 +193,7 @@ const EditQuiz = ({ navigation }) => {
           style={designSystemStyles.listView}
         />
       </View>
-      <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack()}/>
+      <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.navigate('QuizPreview')}/>
     </View>
   )
 }

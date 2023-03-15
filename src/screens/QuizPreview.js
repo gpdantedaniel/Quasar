@@ -20,10 +20,9 @@ const QuizPreview = ({ navigation }) => {
   const creation = new Date(quiz.creation);
   const lastTaken = new Date(quiz.lastTaken);
 
-  // Completed must always default to true if the last index is greater than the number of questions loaded
-  const completed = !(quiz.lastQuestionIndex < questions.length);
+  const completed = quiz.status === 'completed';
   // Calculate the ratio of the last question's index to the total number of questions
-  const progress = questions.length > 0 ? Number((quiz.lastQuestionIndex/questions.length*100)).toPrecision(3) : 0;
+  const progress = completed ? 100 : (questions.length > 0 ? Number((quiz.lastQuestionIndex/questions.length*100)).toPrecision(3) : 0);
   // Calculate the ratio of points to the total number of questions
   const grade = questions.length > 0 ? Number((quiz.points/questions.length*100)).toPrecision(3) : 0;
 
@@ -45,7 +44,8 @@ const QuizPreview = ({ navigation }) => {
 
     // Update Timestamp for indexing purposes
     await dispatch(updateLastTaken({ quiz }));
-    completed ? await dispatch(resetProgress({ quiz })) : null;
+    // If the quiz was completed, await resetting it
+    quiz.status === "completed" ? await dispatch(resetProgress({ quiz })) : null;
     navigation.navigate('Quiz');
   }
 
@@ -66,6 +66,17 @@ const QuizPreview = ({ navigation }) => {
     })
   }
 
+  const getPrimaryButtonTitle = (status) => {
+    switch(status) {
+      case "start":
+        return "Start"
+      case "inprogress":
+        return "Resume"
+      case "completed":
+        return "Restart"
+    }
+  }
+
   return (
     <View style={designSystemStyles.container}>
       <View style={{gap: 10}}>
@@ -79,7 +90,7 @@ const QuizPreview = ({ navigation }) => {
       <View style={{flex: 1, gap: 20}}>
         <View style={{gap: 10}}>
           <Text style={designSystemStyles.bodyText}>
-            Progress: {(quiz.lastQuestionIndex)} out of {questions.length} questions ({progress}%)
+            Progress: {completed ? questions.length : (quiz.lastQuestionIndex)} out of {questions.length} questions ({progress}%)
           </Text>
           <View style={designSystemStyles.progressBar}>
             <View style={[designSystemStyles.progressFill, {width: `${progress}%`}]}/>
@@ -96,13 +107,7 @@ const QuizPreview = ({ navigation }) => {
           </Text>
         </View>
         <PrimaryButton 
-          title={(completed
-          ? 'Restart'
-          : (quiz.lastQuestionIndex > 0
-            ? 'Resume'
-            : 'Start')
-            )
-          }
+          title={getPrimaryButtonTitle(quiz.status)}
           style={{width: 200}}
           onPress={() => onStart()}
         />
@@ -124,7 +129,7 @@ const QuizPreview = ({ navigation }) => {
         
         
       </View>
-      <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack('Quizzes')}/>
+      <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.navigate('Quizzes')}/>
     </View>
   )
 }

@@ -77,7 +77,7 @@ const QuizCreation = ({ navigation }) => {
     const creation = dispatch(createQuiz({ descriptors }));
     creation.then(async({ payload }) => {
       await dispatch(loadQuiz({quiz: payload}));
-      navigation.navigate('QuizPreview');
+      navigation.navigate('EditQuiz');
     })
    
     toast.promise(creation, {

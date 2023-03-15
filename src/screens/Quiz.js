@@ -88,7 +88,7 @@ const Quiz = ({ navigation }) => {
 
     // Be very careful here, effects on state must come after changing screen
     // Otherwise, an index out of boundaries error may occurr at the end
-    await dispatch(updateProgress({ quiz, isCorrect }))
+    await dispatch(updateProgress({ quiz, isCorrect, length: questions.length}))
     setViewingAnswer(false);
     setSelection('');
   }

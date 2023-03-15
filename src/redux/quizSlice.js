@@ -13,6 +13,7 @@ const initialState = {
   creation: null,
   lastQuestionIndex: null,
   points: null,
+  status: null,
 }
 
 const updateLastTaken = createAsyncThunk(
@@ -40,6 +41,7 @@ const resetProgress = createAsyncThunk(
       await updateDoc(quizRef, {
         lastQuestionIndex: 0,
         points: 0,
+        status: "start",
       });
       return
     } catch(error) {
@@ -50,15 +52,24 @@ const resetProgress = createAsyncThunk(
 
 const updateProgress = createAsyncThunk(
   'quiz/updateProgress',
-  async({ quiz, isCorrect}, thunkAPI) => {
+  async({ quiz, isCorrect, length}, thunkAPI) => {
     try {
       const auth = getAuth();
       const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
-      await updateDoc(quizRef, {
-        lastQuestionIndex: quiz.lastQuestionIndex + 1,
+       // If lastQuestionIndex is the last index available
+      const lastIndex = quiz.lastQuestionIndex >= length - 1;
+      console.log('quiz.lastQuestionIndex: ', quiz.lastQuestionIndex);
+      console.log('length: ', length);
+      console.log('lastIndex: ', lastIndex);
+      
+      const update = {
+        lastQuestionIndex: (lastIndex ? 0 : quiz.lastQuestionIndex + 1),
         points: isCorrect ? quiz.points + 1 : quiz.points,
-      });
-      return { isCorrect }
+        status: (lastIndex ? "completed" : "inprogress")
+      }
+      console.log('update: ', update);
+      await updateDoc(quizRef, update);
+      return { update }
     } catch(error) {
       console.log(error)
     }
@@ -107,13 +118,15 @@ export const quizSlice = createSlice({
     })
     
     builder.addCase(updateProgress.fulfilled, (state, action) => {
-      state.lastQuestionIndex = state.lastQuestionIndex + 1;
-      state.points = action.payload.isCorrect ? state.points + 1 : state.points;
+      state = Object.assign(state, action.payload.update);
+      // state.lastQuestionIndex = state.lastQuestionIndex + 1;
+      // state.points = action.payload.isCorrect ? state.points + 1 : state.points;
     })
 
     builder.addCase(resetProgress.fulfilled, (state) => {
       state.lastQuestionIndex = 0;
       state.points = 0;
+      state.status = "start";
     })
 
     builder.addCase(updateLastTaken.fulfilled, (state, action) => {
