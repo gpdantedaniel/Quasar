@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 
 import { useFonts } from 'expo-font';
 import designSystemStyles from './src/assets/styles/index'
@@ -20,7 +20,6 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 import { store } from './src/redux/store';
 import { Provider } from 'react-redux';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
 
 import { Toaster } from 'react-hot-toast';
 
@@ -41,7 +40,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 const functions = getFunctions(app);
 connectFunctionsEmulator(functions, 'localhost', 5001);
 
@@ -81,33 +80,42 @@ export default function App() {
 
   if (loggedIn) {
     return (
-      <View style={{flex: 1}}>
+      <Provider store={store}>
+        <NavigationContainer>
+          <MainStack/>
+        </NavigationContainer> 
         <Toaster 
-        position="top-right" 
-        reverseOrder={false}
-        toastOptions={{
-          style: {
-            ...designSystemStyles.bodyText, 
-            ...designSystemStyles.toast
-          }
+          position="top-right" 
+          reverseOrder={false}
+          toastOptions={{
+            style: {
+              ...designSystemStyles.bodyText, 
+              ...designSystemStyles.toast
+            }
         }}/>
-        <Provider store={store}>
-          <NavigationContainer>
-            <MainStack/>
-          </NavigationContainer>    
-        </Provider>
-      </View>
+      </Provider>
     )
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name='Login' component={LoginScreen} options={defaultScreenOptions}/>
-        <Stack.Screen name='SignUp' component={SignUpScreen} options={defaultScreenOptions}/>
-        <Stack.Screen name='PasswordReset' component={PasswordReset} options={defaultScreenOptions}/>
-        <Stack.Screen name='EmailSent' component={EmailSentScreen} options={defaultScreenOptions}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <View style={{flex: 1}}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name='Login' component={LoginScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='SignUp' component={SignUpScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='PasswordReset' component={PasswordReset} options={defaultScreenOptions}/>
+          <Stack.Screen name='EmailSent' component={EmailSentScreen} options={defaultScreenOptions}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+      <Toaster 
+          position="top-right" 
+          reverseOrder={false}
+          toastOptions={{
+            style: {
+              ...designSystemStyles.bodyText, 
+              ...designSystemStyles.toast
+            }
+        }}/>
+    </View>
   );
 }

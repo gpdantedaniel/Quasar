@@ -26,7 +26,7 @@ const Quizzes = ({ navigation }) => {
     return (
       <View style={designSystemStyles.container}>
         <Text style={designSystemStyles.bigHeadingBold}>My Quizzes</Text>
-        <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'left', gap: 20}}>
+        <View style={{flex: 1, justifyContent: 'flex-start', gap: 20}}>
           <FlatList
             style={designSystemStyles.listView}
             data={quizzes}
@@ -42,7 +42,7 @@ const Quizzes = ({ navigation }) => {
                     {quizzes[index].topic}
                   </Text>
                 </View>
-                <View style={{width: '60%', alignItems: 'left'}}>
+                <View style={{width: '60%'}}>
                   <Text numberOfLines={1} style={designSystemStyles.bodyText}>
                     {quizzes[index].description}
                   </Text>

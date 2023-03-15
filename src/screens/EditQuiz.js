@@ -132,7 +132,6 @@ const EditQuiz = ({ navigation }) => {
       answer: "A generic answer",
       options: ["False option 1", "False option 2", "False option 3", "False option 4"]
     }}))
-
     toast.promise(creation, {
       loading: 'Adding question...',
       success: 'Question added!',
@@ -141,7 +140,7 @@ const EditQuiz = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={designSystemStyles.container}>
       <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>Edit Quiz</Text>
 
       <View style={{flexDirection: 'row', alignItems: 'flex-end', gap: 20}}>
@@ -193,14 +192,6 @@ const EditQuiz = ({ navigation }) => {
 export default EditQuiz
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'left',
-    justifyContent: 'center',
-    gap: 20,
-    padding: 50,
-  },
   questionItem: {
     backgroundColor: '#f7f7f7',
     borderRadius: 10,

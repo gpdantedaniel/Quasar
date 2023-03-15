@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Text, View, TextInput } from 'react-native'
+import React, { useState, } from 'react'
+import { Text, View, TextInput, Platform } from 'react-native'
 import { GhostButton, PrimaryButton } from '../components'
 import designSystemStyles from '../assets/styles'
 
@@ -23,7 +23,7 @@ const QuizCreation = ({ navigation }) => {
 
   const onCreateQuiz = () => {
     if (input === '') {
-      toast('Put some text in first!');
+      toast('Add some text first!', {icon: '🤗'})
       return
     }
     setProcessing(true);
@@ -55,13 +55,11 @@ const QuizCreation = ({ navigation }) => {
         console.log(error);
         setProcessing(false);
       })
-            
       toast.promise(creation, {
         loading: 'Creating quiz',
         success: 'Quiz ready!',
         error: 'Could not generate quiz. Try again later'
       })
-
     } catch(error) {
       console.log(error);
       toast.error('Could not generate quiz. Try again later');

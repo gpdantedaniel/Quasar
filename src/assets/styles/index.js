@@ -55,7 +55,6 @@ const designSystemStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'left',
     justifyContent: 'center',
     gap: 20,
     padding: 50,

@@ -59,7 +59,6 @@ const QuizPreview = ({ navigation }) => {
       dispatch(clearQuestions()),
       dispatch(clearQuiz()),
     ]);
-
     toast.promise(deleted, {
       loading: 'Deleting quiz...',
       success: 'Quiz deleted!',
