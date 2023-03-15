@@ -46,6 +46,10 @@ connectFunctionsEmulator(functions, 'localhost', 5001);
 
 const Stack = createNativeStackNavigator();
 const defaultScreenOptions = {headerShown: false,  animation: 'none'};
+const toastOptions = {style: {
+  ...designSystemStyles.bodyText, 
+  ...designSystemStyles.toast
+}}
 
 export default function App() {
   const [authLoaded, setAuthLoaded] = useState(false);
@@ -84,15 +88,7 @@ export default function App() {
         <NavigationContainer>
           <MainStack/>
         </NavigationContainer> 
-        <Toaster 
-          position="top-right" 
-          reverseOrder={false}
-          toastOptions={{
-            style: {
-              ...designSystemStyles.bodyText, 
-              ...designSystemStyles.toast
-            }
-        }}/>
+        <Toaster position="top-right" reverseOrder={false} toastOptions={toastOptions}/>
       </Provider>
     )
   }
@@ -107,15 +103,7 @@ export default function App() {
           <Stack.Screen name='EmailSent' component={EmailSentScreen} options={defaultScreenOptions}/>
         </Stack.Navigator>
       </NavigationContainer>
-      <Toaster 
-          position="top-right" 
-          reverseOrder={false}
-          toastOptions={{
-            style: {
-              ...designSystemStyles.bodyText, 
-              ...designSystemStyles.toast
-            }
-        }}/>
+      <Toaster position="top-right" reverseOrder={false} toastOptions={toastOptions}/>
     </View>
   );
 }

@@ -43,7 +43,7 @@ const createQuiz = createAsyncThunk(
         creation: Timestamp.now(),
         lastQuestionIndex: 0,
         points: 0,
-        start: "start",
+        status: "start",
       };
   
       const quizRef = await addDoc(quizzesRef, quiz);

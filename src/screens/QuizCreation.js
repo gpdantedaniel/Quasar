@@ -21,48 +21,33 @@ const QuizCreation = ({ navigation }) => {
   const functions = getFunctions(getApp());
   const generateQuiz = httpsCallable(functions, 'generateQuiz');
 
-  const onCreateQuiz = () => {
+  const onCreateQuiz = async () => {
     if (input === '') {
-      toast('Add some text first!', {icon: '🤗'})
+      toast('Add some text first!', {icon: '🤗'});
       return
     }
+
+    // Outputs a unique Id for the toast
+    const creationToast = toast.loading('Creating quiz');
     setProcessing(true);
 
     try {
-      const create = async() => {
-        const result = await generateQuiz({baseText: input});
-        const descriptors = result.data.descriptors;
-        const questions = result.data.questions;
+      const { data } = await generateQuiz({baseText: input});
+      const descriptors = data.descriptors;
+      const questions = data.questions;
 
-        const quizCreation = await dispatch(createQuiz({ descriptors }));
-        const quiz = quizCreation.payload;
-
-        await dispatch(loadQuiz({ quiz }));
-        await Promise.all(questions.map((question) => 
-          // Await all the questions before moving on
-          dispatch(addQuestion({ quiz, data: question }))
-        ));
-
-        return
-      }
-
-      // This should be a promise
-      const creation = create();
-      creation.then(() => {
-        setProcessing(false);
-        navigation.navigate('QuizPreview');
-      }).catch((error) => {
-        console.log(error);
-        setProcessing(false);
-      })
-      toast.promise(creation, {
-        loading: 'Creating quiz',
-        success: 'Quiz ready!',
-        error: 'Could not generate quiz. Try again later'
-      })
+      // Consider payload to be the quiz
+      const { payload } = await dispatch(createQuiz({ descriptors }));
+      await Promise.all(questions.map((question) => dispatch(addQuestion({ quiz: payload, data: question })) ));
+      await dispatch(loadQuiz({ quiz: payload }));
+      // Notify and load once the quiz has been created
+      toast.success('Quiz created!', {id: creationToast})
+      setProcessing(false);
+      navigation.navigate('QuizPreview');
+      
     } catch(error) {
       console.log(error);
-      toast.error('Could not generate quiz. Try again later');
+      toast.error('Could not create quiz. Try using more concise text', {id: creationToast})
       setProcessing(false);
     }
   }

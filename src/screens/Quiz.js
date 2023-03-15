@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateProgress } from '../redux/quizSlice'
 
-// import { toast } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 
 const OptionCheckbox = ({ value, answer, selection, viewingAnswer, onPress }) => { 
   return (
