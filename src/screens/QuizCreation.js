@@ -9,7 +9,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import { useDispatch } from 'react-redux'
 import { createQuiz } from '../redux/quizzesSlice'
 import { loadQuiz } from '../redux/quizSlice'
-import { addQuestion } from '../redux/questionsSlice'
+import { addQuestion, clearQuestions } from '../redux/questionsSlice'
 
 import toast from '../components/Toast/Notifications'
 
@@ -32,12 +32,13 @@ const QuizCreation = ({ navigation }) => {
     setProcessing(true);
 
     try {
-      const { data } = await generateQuiz({baseText: input});
+      const { data } = await generateQuiz({ input });
       const descriptors = data.descriptors;
       const questions = data.questions;
 
       // Consider payload to be the quiz
       const { payload } = await dispatch(createQuiz({ descriptors }));
+      dispatch(clearQuestions());
       await Promise.all(questions.map((question) => dispatch(addQuestion({ quiz: payload, data: question })) ));
       await dispatch(loadQuiz({ quiz: payload }));
       // Notify and load once the quiz has been created
@@ -61,6 +62,7 @@ const QuizCreation = ({ navigation }) => {
 
     const creation = dispatch(createQuiz({ descriptors }));
     creation.then(async({ payload }) => {
+      dispatch(clearQuestions());
       await dispatch(loadQuiz({quiz: payload}));
       navigation.navigate('EditQuiz');
     })
