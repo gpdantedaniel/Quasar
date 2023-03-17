@@ -3,8 +3,9 @@ import { Text, View, TextInput } from 'react-native'
 import { PrimaryButton, GhostButton} from '../components'
 
 import designSystemStyles from '../assets/styles/index'
-import { EmailAuthProvider, getAuth, reauthenticateWithCredential, updatePassword } from 'firebase/auth'
+import { AuthErrorCodes, EmailAuthProvider, getAuth, reauthenticateWithCredential, updatePassword } from 'firebase/auth'
 import Icon from 'react-native-vector-icons/Ionicons'
+import toast from '../components/Toast/Notifications'
 
 const PasswordResetAuth = ({ navigation }) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -20,9 +21,17 @@ const PasswordResetAuth = ({ navigation }) => {
         navigation.navigate('Account');
       }).catch((error) => {
         console.log(error);
+        toast.error('Something went wrong. Please try again.')
       })
     }).catch((error) => {
-      console.log(error)
+      switch(error.code) {
+        case AuthErrorCodes.INVALID_PASSWORD:
+          toast.error('Wrong password. Did you type it in well?')
+          break;
+        default:
+          toast.error('Something went wrong. Please try again.')
+          break;
+      }
     });
   }
 

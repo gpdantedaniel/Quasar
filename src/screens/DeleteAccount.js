@@ -1,18 +1,20 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import designSystemStyles from '../assets/styles'
 import { GhostButton } from '../components'
-
-import { useDispatch, useSelector } from 'react-redux'
 import Icon from 'react-native-vector-icons/Ionicons'
-import { deleteUser, EmailAuthProvider, getAuth, reauthenticateWithCredential } from 'firebase/auth'
 
+import { AuthErrorCodes, deleteUser, EmailAuthProvider, getAuth, reauthenticateWithCredential } from 'firebase/auth'
 import { getFunctions, httpsCallable } from 'firebase/functions'
+import { getApp } from 'firebase/app'
+
+import { useDispatch } from 'react-redux'
 import { clearUser } from '../redux/userSlice'
 import { clearQuiz } from '../redux/quizSlice'
 import { clearQuizzes } from '../redux/quizzesSlice'
 import { clearQuestions } from '../redux/questionsSlice'
-import { getApp } from 'firebase/app'
+
+import toast from '../components/Toast/Notifications'
 
 const DeleteAccount = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -40,7 +42,17 @@ const DeleteAccount = ({ navigation }) => {
         })
       }).catch((error) => {
         console.log(error);
+        toast.error('Something went wrong. Please try again.')
       })
+    }).catch((error) => {
+      switch(error.code) {
+        case AuthErrorCodes.INVALID_PASSWORD:
+          toast.error('Wrong password. Did you type it in well?')
+          break;
+        default:
+          toast.error('Something went wrong. Please try again.')
+          break;
+      }
     })
   }
 

@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addQuestion, deleteQuestion, updateQuestion } from '../redux/questionsSlice'
 import { resetProgress, setDescriptors } from '../redux/quizSlice'
 
-import { toast } from 'react-hot-toast'
+import toast from '../components/Toast/Notifications'
 
 const QuestionView = ({ quiz, question }) => {
   const dispatch = useDispatch();

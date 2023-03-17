@@ -3,7 +3,8 @@ import { GhostTextInput, PrimaryButton, GhostButton} from '../components'
 import React, { useState } from 'react'
 
 import designSystemStyles from '../assets/styles/index'
-import { getAuth, sendPasswordResetEmail } from 'firebase/auth'
+import { AuthErrorCodes, getAuth, sendPasswordResetEmail } from 'firebase/auth'
+import toast from '../components/Toast/Notifications';
 
 const PasswordReset = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -12,8 +13,18 @@ const PasswordReset = ({ navigation }) => {
     const auth = getAuth();
     sendPasswordResetEmail(auth, email).then(() => {
       navigation.navigate('EmailSent')
-    }).then((error) => {
-      console.log(error);
+    }).catch((error) => {
+      switch(error.code) {
+        case AuthErrorCodes.INVALID_EMAIL:
+          toast.error('Invalid email. Did you type it in well?')
+          break;
+        case AuthErrorCodes.USER_DELETED:
+          toast.error('Email not found. Did you type it in well?')
+          break;
+        default:
+          toast.error('Something went wrong. Please try again.')
+          break;
+      }
     })
   } 
 

@@ -6,7 +6,7 @@ import designSystemStyles from '../assets/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearQuiz, resetProgress, updateLastTaken } from '../redux/quizSlice'
 
-import toast from 'react-hot-toast'
+import toast from '../components/Toast/Notifications'
 import { deleteQuiz } from '../redux/quizzesSlice'
 import { TouchableOpacity } from 'react-native-web'
 import { clearQuestions } from '../redux/questionsSlice'

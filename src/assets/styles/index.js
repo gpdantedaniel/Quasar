@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native"
+import Constants from 'expo-constants';
 
 const designSystemStyles = StyleSheet.create({
   bodyTextSmall: {
@@ -129,9 +130,15 @@ const designSystemStyles = StyleSheet.create({
     outlineStyle: 'none', 
   },
   toast: {
-    boxShadow: 'none',
-    border: '1px solid #c7c7c7',
-    borderRadius: '10px',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    columnGap: 10,
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#c7c7c7',
+    margin: Constants.statusBarHeight + 10,
   },
   quizOption: {
     marginTop: 10, 

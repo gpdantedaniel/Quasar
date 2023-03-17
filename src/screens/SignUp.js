@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View, Image, TextInput } from 'react-native'
-import { GhostTextInput, PrimaryButton, GhostButton} from '../components'
 import React, { useState } from 'react'
+import { Text, View, Image, TextInput } from 'react-native'
+import { PrimaryButton, GhostButton} from '../components'
+import designSystemStyles from '../assets/styles/index'
 
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
+import { AuthErrorCodes, createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
 import { getFirestore, doc, setDoc, Timestamp } from 'firebase/firestore'
 
-import designSystemStyles from '../assets/styles/index'
+import toast from '../components/Toast/Notifications'
 
 const SignUp = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
@@ -25,7 +26,20 @@ const SignUp = ({ navigation }) => {
         console.log(error);
       })
     }).catch((error) => {
-      console.log(error)
+      switch(error.code) {
+        case AuthErrorCodes.INVALID_EMAIL:
+          toast.error('Invalid email. Did you write your email properly?');
+          break;
+        case AuthErrorCodes.WEAK_PASSWORD:
+          toast.error('This password is weak! Make it at least 6 characters long please.');
+          break;
+        case AuthErrorCodes.EMAIL_EXISTS:
+          toast.error('This email is already in use!');
+          break;
+        default:
+          toast.error('Something went wrong. Please try again.')
+          break;
+      }
     })
   }
 

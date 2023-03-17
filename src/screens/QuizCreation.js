@@ -11,7 +11,7 @@ import { createQuiz } from '../redux/quizzesSlice'
 import { loadQuiz } from '../redux/quizSlice'
 import { addQuestion } from '../redux/questionsSlice'
 
-import toast from 'react-hot-toast';
+import toast from '../components/Toast/Notifications'
 
 const QuizCreation = ({ navigation }) => {
   const dispatch = useDispatch();
