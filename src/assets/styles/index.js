@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native"
+import { Platform, StyleSheet } from "react-native"
 import Constants from 'expo-constants';
 
 const designSystemStyles = StyleSheet.create({
@@ -58,7 +58,7 @@ const designSystemStyles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     gap: 20,
-    padding: 50,
+    padding: Platform.OS == 'web' ? 50 : 10,
   },
   flexCentered: {
     flex: 1, 

@@ -57,7 +57,12 @@ const SignUp = ({ navigation }) => {
           <TextInput style={designSystemStyles.GhostTextInput} placeholder={'Email'} onChangeText={(email) => setEmail(email)}/>
           <TextInput style={designSystemStyles.GhostTextInput} placeholder={'Password'} onChangeText={(password) => setPassword(password)} secureTextEntry={true}/>
           <PrimaryButton title='Sign up' onPress={() => onSignUp()}/>
-          <Text style={{...designSystemStyles.bodyText, textAlign: 'center'}}>By signing up, you agree to our Terms and Privacy Policy.</Text>
+          <Text style={{...designSystemStyles.bodyText}}>By signing up, you agree to our Terms and Privacy Policy.</Text>
+          <Text 
+            style={{...designSystemStyles.bodyText, textDecorationLine: 'underline'}} 
+            onPress={() => navigation.navigate('HelpAndContact', {back: true})}>
+              Help & Contact
+          </Text>
         </View>
       </View>
       <GhostButton style={{alignSelf: 'center'}} title='<- Back' onPress={() => navigation.goBack()}/>

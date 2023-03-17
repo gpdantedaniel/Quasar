@@ -39,7 +39,11 @@ const PasswordReset = ({ navigation }) => {
           <TextInput placeholder={'Email'} style={designSystemStyles.GhostTextInput} onChangeText={(email) => setEmail(email)}/>
           <PrimaryButton title={'Send link'} onPress={() => onReset()}/>
           <Text style={{...designSystemStyles.bodyText, textAlign: 'center', width: 300}}>We'll send you a link so that you may reset your password.</Text>
-          <Text style={{...designSystemStyles.bodyText, textAlign: 'center', textDecorationLine: 'underline'}} onPress={() => navigation.navigate('PasswordRecovery')}>Help & Contact</Text>
+          <Text 
+            style={{...designSystemStyles.bodyText, textDecorationLine: 'underline'}} 
+            onPress={() => navigation.navigate('HelpAndContact', {back: true})}>
+              Help & Contact
+          </Text>
         </View>
       </View>
       <GhostButton style={{alignSelf: 'center'}} title='<- Back' onPress={() => navigation.goBack()}/>

@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, StyleSheet } from 'react-native'
+import {Text, TouchableOpacity, StyleSheet, Platform } from 'react-native'
 import React from 'react'
 
 const PrimaryButton = ({title, style, onPress}) => {

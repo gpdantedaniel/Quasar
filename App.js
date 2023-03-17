@@ -11,6 +11,7 @@ import SignUpScreen from './src/screens/SignUp';
 import PasswordReset from './src/screens/PasswordReset';
 import EmailSentScreen from './src/screens/EmailSent';
 import MainStack from './src/screens/stacks/MainStack';
+import HelpAndContactScreen from './src/screens/HelpAndContact';
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
@@ -97,6 +98,8 @@ export default function App() {
           <Stack.Screen name='SignUp' component={SignUpScreen} options={defaultScreenOptions}/>
           <Stack.Screen name='PasswordReset' component={PasswordReset} options={defaultScreenOptions}/>
           <Stack.Screen name='EmailSent' component={EmailSentScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='HelpAndContact' component={HelpAndContactScreen} options={defaultScreenOptions}/>
+
         </Stack.Navigator>
       </NavigationContainer>
       <Notifications/>

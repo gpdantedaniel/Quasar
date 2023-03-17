@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import AccountStack from './AccountStack';
 import QuizStack from './QuizStack';
+import HelpAndContactScreen from '../HelpAndContact';
 import { createVerticalNavigator } from '../../components'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -38,7 +39,7 @@ const MainStack = () => {
           headerShown: false,
           tabBarIcon: () => (<Icon name="person-circle-outline" color={'black'} size={25}/>)
           }}/>
-        <Tab.Screen name="Help & Contact" component={AccountStack} options={{
+        <Tab.Screen name="HelpAndContact" component={HelpAndContactScreen} options={{
           headerShown: false,
           tabBarIcon: () => (<Icon name="mail-outline" color={'black'} size={25}/>)
         }}/>
@@ -56,7 +57,8 @@ const MainStack = () => {
         title: 'Account',
         tabBarIcon: <Icon name="person-circle-outline" color={'black'} size={25}/>
         }}/>
-      <Vertical.Screen name="Help & Contact" component={AccountStack} options={{
+      <Vertical.Screen name="HelpAndContact" component={HelpAndContactScreen} options={{
+        title: 'Help & Contact',
         tabBarIcon: <Icon name="mail-outline" color={'black'} size={25}/>
       }}/>
     </Vertical.Navigator>
