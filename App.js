@@ -18,6 +18,7 @@ import { initializeApp } from "firebase/app"
 import { getAnalytics } from "firebase/analytics";
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 import { store } from './src/redux/store';
 import { Provider } from 'react-redux';
@@ -41,9 +42,19 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
+const analytics = getAnalytics(app);
 const functions = getFunctions(app);
 connectFunctionsEmulator(functions, 'localhost', 5001);
+
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+// Pass your reCAPTCHA v3 site key (public key) to activate(). Make sure this
+// key is the counterpart to the secret key you set in the Firebase console.
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider('6LcojA0lAAAAAHAYiBkcdg-tF6HNa6Bn71W5qKvM'),
+  // Optional argument. If true, the SDK automatically refreshes App Check
+  // tokens as needed.
+  isTokenAutoRefreshEnabled: true
+});
 
 const Stack = createNativeStackNavigator();
 const defaultScreenOptions = {headerShown: false,  animation: 'none'};
