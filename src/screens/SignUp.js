@@ -10,6 +10,8 @@ import * as Sentry from 'sentry-expo'
 
 import toast from '../components/Toast/Notifications'
 
+import PropTypes from 'prop-types'
+
 const SignUp = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName ] = useState('');
@@ -75,6 +77,10 @@ const SignUp = ({ navigation }) => {
 
     </View>
   )
+}
+
+SignUp.propTypes = {
+  navigation: PropTypes.object.isRequired
 }
 
 export default SignUp

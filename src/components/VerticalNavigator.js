@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Text, Pressable, View, StyleSheet, Image, TouchableOpacity, Platform } from 'react-native';
-import { NavigationHelpersContext, useNavigationBuilder, createNavigatorFactory, TabRouter, TabActions} from '@react-navigation/native';
+import React from 'react';
+import { Text, View, StyleSheet, Image, TouchableOpacity, Platform } from 'react-native';
+import { useNavigationBuilder, createNavigatorFactory, TabRouter, TabActions} from '@react-navigation/native';
 import designSystemStyles from '../assets/styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getAuth, signOut } from 'firebase/auth';
 import * as Sentry from 'sentry-expo';
+import PropTypes from 'prop-types';
 
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../redux/userSlice';
@@ -101,6 +102,14 @@ function VerticalNavigator({initialRouteName, children, screenOptions, tabBarSty
 
     </NavigationContent>
   )
+}
+
+VerticalNavigator.propTypes = {
+  initialRouteName: PropTypes.string,
+  children: PropTypes.array,
+  screenOptions: PropTypes.object,
+  tabBarStyle: PropTypes.object,
+  contentStyle: PropTypes.object,
 }
 
 const styles = StyleSheet.create({

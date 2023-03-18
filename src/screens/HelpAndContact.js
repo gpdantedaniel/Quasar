@@ -3,6 +3,7 @@ import { Text, View, } from 'react-native'
 import { GhostButton} from '../components'
 import Icon from 'react-native-vector-icons/Ionicons'
 import designSystemStyles from '../assets/styles/index'
+import PropTypes from 'prop-types'
 
 const HelpAndContact = ({ navigation, route }) => {
   const back = route.params ? route.params.back : false;
@@ -21,6 +22,11 @@ const HelpAndContact = ({ navigation, route }) => {
       { back ? <GhostButton style={{alignSelf: 'center'}} title='<- Back' onPress={() => navigation.goBack()}/> : null}
     </View>
   )
+}
+
+HelpAndContact.propTypes = {
+  navigation: PropTypes.object.isRequired,
+  route: PropTypes.object.isRequired,
 }
 
 export default HelpAndContact

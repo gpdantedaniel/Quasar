@@ -14,7 +14,7 @@ const initialState = {
 
 const fetchUser = createAsyncThunk(
   'user/fetchUser',
-  async(thunkAPI) => {
+  async() => {
     try {
       const auth = getAuth();
       const docRef = doc(getFirestore(), 'users', auth.currentUser.uid);
@@ -38,7 +38,11 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     clearUser: (state) => {
-      state = initialState;
+      state.docId = null;
+      state.firstName = null;
+      state.lastName = null;
+      state.email = null;
+      state.creation = null;
     }
   } ,
 

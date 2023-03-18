@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native'
+import { Text, View, FlatList, TouchableOpacity } from 'react-native'
 import { GhostButton, PrimaryButton } from '../components'
 import designSystemStyles from '../assets/styles'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updateProgress } from '../redux/quizSlice'
 
 import toast from '../components/Toast/Notifications'
+
+import PropTypes from 'prop-types'
 
 const OptionCheckbox = ({ value, answer, selection, viewingAnswer, onPress }) => { 
   return (
@@ -46,6 +48,14 @@ const OptionCheckbox = ({ value, answer, selection, viewingAnswer, onPress }) =>
       </Text>
     </View>
   )
+}
+
+OptionCheckbox.propTypes = {
+  value: PropTypes.string.isRequired,
+  answer: PropTypes.string.isRequired,
+  selection: PropTypes.string.isRequired,
+  viewingAnswer: PropTypes.bool.isRequired,
+  onPress: PropTypes.func.isRequired,
 }
 
 const Quiz = ({ navigation }) => {
@@ -160,8 +170,8 @@ const Quiz = ({ navigation }) => {
   )
 }
 
+Quiz.propTypes = {
+  navigation: PropTypes.object.isRequired
+}
+
 export default Quiz
-
-const styles = StyleSheet.create({
-
-})

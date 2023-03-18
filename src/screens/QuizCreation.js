@@ -15,6 +15,8 @@ import { addQuestion, clearQuestions } from '../redux/questionsSlice'
 
 import toast from '../components/Toast/Notifications'
 
+import PropTypes from 'prop-types'
+
 const QuizCreation = ({ navigation }) => {
   const dispatch = useDispatch();
   const [input, setInput] = useState('');
@@ -111,6 +113,10 @@ const QuizCreation = ({ navigation }) => {
       <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack()}/>
     </View> 
   )
+}
+
+QuizCreation.propTypes = {
+  navigation: PropTypes.object.isRequired,
 }
 
 export default QuizCreation

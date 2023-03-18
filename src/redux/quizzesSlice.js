@@ -8,7 +8,7 @@ import * as Sentry from 'sentry-expo'
 
 const fetchQuizzes = createAsyncThunk(
   'quizzes/fetchQuizzes',
-  async(thunkAPI) => {
+  async() => {
     try {
       const auth = getAuth();
       const quizzesRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
@@ -34,7 +34,7 @@ const fetchQuizzes = createAsyncThunk(
 
 const createQuiz = createAsyncThunk(
   'quizzes/createQuiz',
-  async({ descriptors }, thunkAPI) => {
+  async({ descriptors }) => {
     try {
       const auth = getAuth();
       const quizzesRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
@@ -50,7 +50,6 @@ const createQuiz = createAsyncThunk(
       };
   
       const quizRef = await addDoc(quizzesRef, quiz);
-      // Add the docId and transform all Firestore Timestamps to strings
       quiz.docId = quizRef.id;
       quiz.lastTaken = quiz.lastTaken.toDate().toString();
       quiz.creation = quiz.creation.toDate().toString();
@@ -67,7 +66,7 @@ const createQuiz = createAsyncThunk(
 
 const deleteQuiz = createAsyncThunk(
   'quiz/deleteQuiz',
-  async({ quiz }, thunkAPI) => {
+  async({ quiz }) => {
     try {
       const functions = getFunctions(getApp());
       const deleteQuizRecursively = httpsCallable(functions, 'deleteQuiz');
@@ -96,14 +95,14 @@ export const quizzesSlice = createSlice({
     },
     reflectQuizUpdates: (state, action) => {
       const index = state.quizzes.findIndex(quiz => quiz.docId == action.payload.quiz.docId);
-      state.quizzes[index] = action.payload.quiz;
+      state.quizzes[parseInt(index)] = action.payload.quiz;
     },
     deleteQuizFromQuizzes: (state, action) => {
       const index = state.quizzes.findIndex(quiz => quiz.docId == action.payload.quiz.docId);
-      state.quizzes[index] = action.payload.quiz;
+      state.quizzes[parseInt(index)] = action.payload.quiz;
     },
-    clearQuizzes: (state, action) => {
-      state = initialState;
+    clearQuizzes: (state) => {
+      state.quizzes = [];
     }
   },
 

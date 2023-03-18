@@ -7,7 +7,7 @@ import * as Sentry from 'sentry-expo';
 // AsyncThunk functions
 const fetchQuestions = createAsyncThunk(
   'questions/fetchQuestions',
-  async ({ quiz }, thunkAPI) => {
+  async ({ quiz }) => {
     try {
       const auth = getAuth();
       const questionsRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId, 'questions');
@@ -32,7 +32,7 @@ const fetchQuestions = createAsyncThunk(
 
 const addQuestion = createAsyncThunk(
   'questions/addQuestion',
-  async({ quiz, data }, thunkAPI) => {
+  async({ quiz, data }) => {
     try{
       // Generate a creation Timestamp to fetch chronologically
       const creation = Timestamp.now();
@@ -55,7 +55,7 @@ const addQuestion = createAsyncThunk(
 
 const updateQuestion = createAsyncThunk(
   'questions/updateQuestion',
-  async({ quiz, question, update }, thunkAPI) => {
+  async({ quiz, question, update }) => {
     try {
       const auth = getAuth();
       const docRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId, 'questions', question.docId);
@@ -71,7 +71,7 @@ const updateQuestion = createAsyncThunk(
 
 const deleteQuestion = createAsyncThunk(
   'questions/deleteQuestion',
-  async({ quiz, question }, thunkAPI) => {
+  async({ quiz, question }) => {
     try {
       const auth = getAuth();
       const docRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId, 'questions', question.docId);
@@ -93,7 +93,7 @@ export const questionsSlice = createSlice({
   name: 'questions',
   initialState,
   reducers: {
-    clearQuestions: (state, action) => {
+    clearQuestions: (state) => {
       state.questions = [];
     }
   },
@@ -107,7 +107,7 @@ export const questionsSlice = createSlice({
       // If the question exists (outputs -1 when not found)
       const index = state.questions.findIndex(question => question.docId === action.payload.question.docId);
       // docId will not be replaced as the source does not carry the docId attribute
-      state.questions[index] = Object.assign(state.questions[index], action.payload.update)
+      state.questions[parseInt(index)] = Object.assign(state.questions[parseInt(index)], action.payload.update)
     })
 
     builder.addCase(addQuestion.fulfilled, (state, action) => {

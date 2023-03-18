@@ -18,7 +18,7 @@ const initialState = {
 
 const updateLastTaken = createAsyncThunk(
   'quiz/updateLastTaken',
-  async({ quiz }, thunkAPI) => {
+  async({ quiz }) => {
     try {
       const auth = getAuth();
       const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
@@ -36,7 +36,7 @@ const updateLastTaken = createAsyncThunk(
 
 const resetProgress = createAsyncThunk(
   'quiz/resetProgress',
-  async({ quiz }, thunkAPI) => {
+  async({ quiz }) => {
     try {
       const auth = getAuth();
       const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
@@ -57,7 +57,7 @@ const resetProgress = createAsyncThunk(
 
 const updateProgress = createAsyncThunk(
   'quiz/updateProgress',
-  async({ quiz, isCorrect, length}, thunkAPI) => {
+  async({ quiz, isCorrect, length}) => {
     try {
       const auth = getAuth();
       const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
@@ -82,7 +82,7 @@ const updateProgress = createAsyncThunk(
 
 const setDescriptors = createAsyncThunk(
   'quiz/setDescriptors',
-  async({ quiz, descriptors }, thunkAPI) => {
+  async({ quiz, descriptors }) => {
     try {
       const auth = getAuth();
       const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
@@ -110,7 +110,15 @@ export const quizSlice = createSlice({
       state = Object.assign(state, action.payload.quiz);
     },
     clearQuiz: (state) => {
-      state = initialState
+      state.docId = null;
+      state.name = null;
+      state.topic = null;
+      state.description = null;
+      state.lastTaken = null;
+      state.creation = null;
+      state.lastQuestionIndex = null;
+      state.points = null;
+      state.status = null;
     },
   },
 

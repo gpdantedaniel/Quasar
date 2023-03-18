@@ -8,6 +8,8 @@ import { getAuth, signInWithEmailAndPassword, AuthErrorCodes } from 'firebase/au
 
 import * as Sentry from 'sentry-expo';
 
+import PropTypes from 'prop-types'
+
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -63,6 +65,10 @@ const Login = ({ navigation }) => {
       <GhostButton style={{alignSelf: 'center'}} title='Create account' onPress={() => navigation.navigate('SignUp')}/>
     </View>
   )
+}
+
+Login.propTypes = {
+  navigation: PropTypes.object.isRequired,
 }
 
 export default Login

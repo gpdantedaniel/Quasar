@@ -8,6 +8,8 @@ import toast from '../components/Toast/Notifications'
 import { AuthErrorCodes, EmailAuthProvider, getAuth, reauthenticateWithCredential, updatePassword } from 'firebase/auth'
 import * as Sentry from 'sentry-expo';
 
+import PropTypes from 'prop-types'
+
 const PasswordResetAuth = ({ navigation }) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword ] = useState('');
@@ -65,6 +67,10 @@ const PasswordResetAuth = ({ navigation }) => {
       <GhostButton style={{alignSelf: 'center'}} title='<- Back' onPress={() => navigation.goBack()}/>
     </View>
   )
+}
+
+PasswordResetAuth.propTypes = {
+  navigation: PropTypes.object.isRequired,
 }
 
 export default PasswordResetAuth

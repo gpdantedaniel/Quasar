@@ -10,6 +10,8 @@ import { resetProgress, setDescriptors } from '../redux/quizSlice'
 
 import toast from '../components/Toast/Notifications'
 
+import PropTypes from 'prop-types';
+
 const QuestionView = ({ quiz, question }) => {
   const dispatch = useDispatch();
   // A distinction needs to be made between questionText and the question Object for now
@@ -112,6 +114,10 @@ const QuestionView = ({ quiz, question }) => {
   )
 }
 
+QuestionView.propTypes = {
+  quiz: PropTypes.object.isRequired,
+  question: PropTypes.object.isRequired,
+}
 
 const EditQuiz = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -196,6 +202,10 @@ const EditQuiz = ({ navigation }) => {
       <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.navigate('QuizPreview')}/>
     </View>
   )
+}
+
+EditQuiz.propTypes = {
+  navigation: PropTypes.object.isRequired,
 }
 
 export default EditQuiz

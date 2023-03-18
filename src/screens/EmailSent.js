@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
-import { GhostTextInput, PrimaryButton, GhostButton} from '../components'
+import { Text, View } from 'react-native'
+import { PrimaryButton } from '../components'
 import React from 'react'
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import designSystemStyles from '../assets/styles/index'
+
+import PropTypes from 'prop-types'
 
 const EmailSent = ({ navigation }) => {
   return (
@@ -20,6 +22,10 @@ const EmailSent = ({ navigation }) => {
       </View>
     </View>
   )
+}
+
+EmailSent.propTypes = {
+  navigation: PropTypes.object.isRequired
 }
 
 export default EmailSent

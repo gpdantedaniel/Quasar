@@ -1,3 +1,4 @@
+import React from 'react';
 import toast, { useToaster } from 'react-hot-toast';
 import { View } from 'react-native';
 import Toast from './Toast';

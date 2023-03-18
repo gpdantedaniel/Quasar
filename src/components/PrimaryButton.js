@@ -1,5 +1,6 @@
-import {Text, TouchableOpacity, StyleSheet, Platform } from 'react-native'
+import {Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const PrimaryButton = ({title, style, onPress}) => {
   return (
@@ -10,6 +11,12 @@ const PrimaryButton = ({title, style, onPress}) => {
 }
 
 export default PrimaryButton
+
+PrimaryButton.propTypes = {
+  title: PropTypes.string.isRequired,
+  style: PropTypes.object,
+  onPress: PropTypes.func,
+}
 
 const styles = StyleSheet.create({
   primaryButton: {

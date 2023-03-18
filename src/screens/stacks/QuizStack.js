@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native'
 import React, { useEffect } from 'react'
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';

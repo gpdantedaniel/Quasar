@@ -18,6 +18,8 @@ import { clearQuestions } from '../redux/questionsSlice'
 
 import toast from '../components/Toast/Notifications'
 
+import PropTypes from 'prop-types';
+
 const DeleteAccount = ({ navigation }) => {
   const dispatch = useDispatch();
   const [password, setPassword] = useState('');
@@ -83,10 +85,12 @@ const DeleteAccount = ({ navigation }) => {
       </View>
       <GhostButton style={{alignSelf: 'center'}} title='<- Back' onPress={() => navigation.goBack()}/>
     </View>
-    
   )
 }
 
+DeleteAccount.propTypes = {
+  navigation: PropTypes.object.isRequired
+}
  
 
 export default DeleteAccount

@@ -1,7 +1,9 @@
+import React from 'react';
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, Animated, Text, View } from "react-native";
 import designSystemStyles from "../../assets/styles";
 import Icon from "react-native-vector-icons/Ionicons";
+import PropTypes from 'prop-types';
 
 const Toast = ({ t, updateHeight, offset }) => {
   // Animations for enter and exit
@@ -71,3 +73,9 @@ const Toast = ({ t, updateHeight, offset }) => {
 };
 
 export default Toast
+
+Toast.propTypes = {
+  t: PropTypes.object,
+  updateHeight: PropTypes.func,
+  offset: PropTypes.number,
+}

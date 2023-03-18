@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { useFonts } from 'expo-font';
-import designSystemStyles from './src/assets/styles/index'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -16,7 +15,7 @@ import HelpAndContactScreen from './src/screens/HelpAndContact';
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
 import { getAnalytics, isSupported } from "firebase/analytics";
-import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
+import { getFunctions } from 'firebase/functions'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
@@ -44,8 +43,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = isSupported() ? getAnalytics(app) : null;
-const functions = getFunctions(app);
+isSupported() ? getAnalytics(app) : null;
+getFunctions(app);
 
 // DISABLE IN PRODUCTION
 // connectFunctionsEmulator(functions, 'localhost', 5001);
@@ -53,7 +52,7 @@ const functions = getFunctions(app);
 
 // Pass your reCAPTCHA v3 site key (public key) to activate(). Make sure this
 // key is the counterpart to the secret key you set in the Firebase console.
-const appCheck = initializeAppCheck(app, {
+initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider('6LcojA0lAAAAAHAYiBkcdg-tF6HNa6Bn71W5qKvM'),
   // Optional argument. If true, the SDK automatically refreshes App Check
   // tokens as needed.
@@ -120,7 +119,6 @@ export default function App() {
           <Stack.Screen name='PasswordReset' component={PasswordReset} options={defaultScreenOptions}/>
           <Stack.Screen name='EmailSent' component={EmailSentScreen} options={defaultScreenOptions}/>
           <Stack.Screen name='HelpAndContact' component={HelpAndContactScreen} options={defaultScreenOptions}/>
-
         </Stack.Navigator>
       </NavigationContainer>
       <Notifications/>

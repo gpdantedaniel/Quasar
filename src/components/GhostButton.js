@@ -1,5 +1,6 @@
 import {Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const GhostButton = ({title, style, disabled, onPress}) => {
   return (
@@ -11,15 +12,12 @@ const GhostButton = ({title, style, disabled, onPress}) => {
 
 export default GhostButton
 
-/*
-shadow: 'black',
-shadowOffset: {
-  width: 2, 
-  height: 2,
-},
-shadowOpacity: 1,
-shadowRadius: 1,
-*/
+GhostButton.propTypes = {
+  title: PropTypes.string.isRequired,
+  style: PropTypes.object,
+  disabled: PropTypes.bool,
+  onPress: PropTypes.func,
+}
 
 const styles = StyleSheet.create({
   primaryButton: {

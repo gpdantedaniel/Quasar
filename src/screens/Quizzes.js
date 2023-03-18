@@ -8,6 +8,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { loadQuiz } from '../redux/quizSlice'
 import { fetchQuestions } from '../redux/questionsSlice'
 
+import PropTypes from 'prop-types'
+
 const Quizzes = ({ navigation }) => {
   const dispatch = useDispatch();
   const quizzes = useSelector((state) => state.quizzes.quizzes).slice().sort((a, b) => {
@@ -33,18 +35,18 @@ const Quizzes = ({ navigation }) => {
             renderItem={({index}) => 
               <TouchableOpacity 
                 style={designSystemStyles.listItem} 
-                onPress={() => onSelectQuiz(quizzes[index])}>
+                onPress={() => onSelectQuiz(quizzes[parseInt(index)])}>
                 <View style={{width: '30%'}}>
                   <Text numberOfLines={1} style={designSystemStyles.bodyText}>
-                    {quizzes[index].name}
+                    {quizzes[parseInt(index)].name}
                   </Text>
                   <Text numberOfLines={1} style={designSystemStyles.bodyTextSmall}>
-                    {quizzes[index].topic}
+                    {quizzes[parseInt(index)].topic}
                   </Text>
                 </View>
                 <View style={{width: '60%'}}>
                   <Text numberOfLines={1} style={designSystemStyles.bodyText}>
-                    {quizzes[index].description}
+                    {quizzes[parseInt(index)].description}
                   </Text>
                 </View>
                 <View style={{width: '10%'}}>
@@ -81,6 +83,10 @@ const Quizzes = ({ navigation }) => {
       </View>
     </View>
   )
+}
+
+Quizzes.propTypes = {
+  navigation: PropTypes.object.isRequired,
 }
 
 export default Quizzes

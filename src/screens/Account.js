@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import React from 'react'
 import designSystemStyles from '../assets/styles'
 import { GhostButton } from '../components'
 
 import { useSelector } from 'react-redux'
 import Icon from 'react-native-vector-icons/Ionicons'
+import PropTypes from 'prop-types';
 
 const Account = ({ navigation }) => {
   const user = useSelector((state) => state.user);
@@ -27,6 +28,8 @@ const Account = ({ navigation }) => {
   )
 }
 
- 
+Account.propTypes = {
+  navigation: PropTypes.object.isRequired
+}
 
 export default Account

@@ -10,6 +10,8 @@ import toast from '../components/Toast/Notifications'
 import { deleteQuiz } from '../redux/quizzesSlice'
 import { clearQuestions } from '../redux/questionsSlice'
 
+import PropTypes from 'prop-types'
+
 const QuizPreview = ({ navigation }) => {
   const dispatch = useDispatch();
   const quiz = useSelector((state) => state.quiz);
@@ -130,6 +132,10 @@ const QuizPreview = ({ navigation }) => {
       <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.navigate('Quizzes')}/>
     </View>
   )
+}
+
+QuizPreview.propTypes = {
+  navigation: PropTypes.object.isRequired,
 }
 
 export default QuizPreview
