@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Text, Pressable, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Text, Pressable, View, StyleSheet, Image, TouchableOpacity, Platform } from 'react-native';
 import { NavigationHelpersContext, useNavigationBuilder, createNavigatorFactory, TabRouter, TabActions} from '@react-navigation/native';
 import designSystemStyles from '../assets/styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getAuth, signOut } from 'firebase/auth';
+import * as Sentry from 'sentry-expo';
 
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../redux/userSlice';
@@ -32,7 +33,9 @@ function VerticalNavigator({initialRouteName, children, screenOptions, tabBarSty
       dispatch(clearQuiz());
       dispatch(clearQuestions());
     }).catch((error) => {
-      console.log(error);
+      Platform.OS == 'web'
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     });
   }
 

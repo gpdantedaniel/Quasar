@@ -38,7 +38,6 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     clearUser: (state) => {
-      console.log('clear');
       state = initialState;
     }
   } ,

@@ -25,9 +25,7 @@ const Login = ({ navigation }) => {
     }
 
     const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password).then((result) => {
-      console.log(result);
-    }).catch((error) => {
+    signInWithEmailAndPassword(auth, email, password).catch((error) => {
       switch(error.code) {
         case AuthErrorCodes.INVALID_EMAIL:
           toast.error('Invalid email. Did you type it in well?')

@@ -49,7 +49,6 @@ const QuizPreview = ({ navigation }) => {
   }
 
   const onDelete = () => {
-    console.log('executing delete');
     // Load screen before executing other operations
     navigation.navigate('Quizzes');
 

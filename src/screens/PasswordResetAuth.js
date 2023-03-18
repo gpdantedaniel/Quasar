@@ -21,7 +21,9 @@ const PasswordResetAuth = ({ navigation }) => {
       updatePassword(user, newPassword).then(() => {
         navigation.navigate('Account');
       }).catch((error) => {
-        console.log(error);
+        Platform.OS == 'web' 
+          ? Sentry.Browser.captureException(error)
+          : Sentry.Native.captureException(error)
         toast.error('Something went wrong. Please try again.')
       })
     }).catch((error) => {
