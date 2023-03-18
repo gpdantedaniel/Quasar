@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { Platform } from "react-native";
+import * as Sentry from 'sentry-expo';
 
 const initialState = {
   docId: null,
@@ -24,7 +26,9 @@ const fetchUser = createAsyncThunk(
       return user
 
     } catch(error) {
-      console.log(error);
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -42,7 +46,6 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
 
     builder.addCase(fetchUser.fulfilled, (state, action) => {
-      console.log('action.payload: ', action.payload);
       state = Object.assign(state, action.payload);
     })
   }

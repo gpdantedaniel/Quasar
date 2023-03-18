@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAuth } from "firebase/auth";
 import { collection, doc, getDocs, getFirestore, updateDoc, addDoc, deleteDoc, Timestamp, query, orderBy } from "firebase/firestore";
+import { Platform } from "react-native";
+import * as Sentry from 'sentry-expo';
 
 // AsyncThunk functions
 const fetchQuestions = createAsyncThunk(
@@ -21,8 +23,9 @@ const fetchQuestions = createAsyncThunk(
       return questions
 
     } catch(error) {
-      console.log(error);
-      return []
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -43,9 +46,10 @@ const addQuestion = createAsyncThunk(
       // "data" is the question Object itself
       return data
     } catch(error) {
-      console.log(error)
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
-
   }
 )
 
@@ -58,7 +62,9 @@ const updateQuestion = createAsyncThunk(
       await updateDoc(docRef, update);
       return { question, update }
     } catch(error) {
-      console.log(error)
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -72,7 +78,9 @@ const deleteQuestion = createAsyncThunk(
       await deleteDoc(docRef);
       return { question }
     } catch(error) {
-      console.log(error);
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -109,7 +117,6 @@ export const questionsSlice = createSlice({
 
     builder.addCase(deleteQuestion.fulfilled, (state, action) => {
       // Remove the question specifically by docId
-      console.log('question to delete: ', action.payload.question.docId);
       state.questions = state.questions.filter(question => question.docId !== action.payload.question.docId)
     })
   }

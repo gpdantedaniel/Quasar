@@ -1,14 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { collection, getFirestore, query, orderBy, getDocs, Timestamp, addDoc, doc } from 'firebase/firestore';
+import { collection, getFirestore, query, orderBy, getDocs, Timestamp, addDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { Platform } from 'react-native';
+import * as Sentry from 'sentry-expo'
 
 const fetchQuizzes = createAsyncThunk(
   'quizzes/fetchQuizzes',
   async(thunkAPI) => {
     try {
-      console.log('FETCHING QUIZZES');
       const auth = getAuth();
       const quizzesRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
       const q = query(quizzesRef, orderBy('lastTaken', 'desc'));
@@ -22,8 +23,11 @@ const fetchQuizzes = createAsyncThunk(
       });
 
       return quizzes
+
     } catch(error) {
-      console.log(error);
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -32,7 +36,6 @@ const createQuiz = createAsyncThunk(
   'quizzes/createQuiz',
   async({ descriptors }, thunkAPI) => {
     try {
-      console.log('descriptors: ', descriptors);
       const auth = getAuth();
       const quizzesRef = collection(getFirestore(), 'users', auth.currentUser.uid, 'quizzes');
       const quiz = {
@@ -52,8 +55,11 @@ const createQuiz = createAsyncThunk(
       quiz.lastTaken = quiz.lastTaken.toDate().toString();
       quiz.creation = quiz.creation.toDate().toString();
       return quiz
+
     } catch(error) { 
-      console.log(error) 
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -67,8 +73,11 @@ const deleteQuiz = createAsyncThunk(
       const deleteQuizRecursively = httpsCallable(functions, 'deleteQuiz');
       await deleteQuizRecursively({ quiz });
       return { quiz }
+
     } catch(error) {
-      console.log(error);
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -94,19 +103,16 @@ export const quizzesSlice = createSlice({
       state.quizzes[index] = action.payload.quiz;
     },
     clearQuizzes: (state, action) => {
-      console.log('clear');
       state = initialState;
     }
   },
 
   extraReducers: (builder) => {
     builder.addCase(fetchQuizzes.fulfilled, (state, action) => {
-      console.log('action payload: ', action.payload);
       state.quizzes = action.payload;
     })
 
     builder.addCase(createQuiz.fulfilled, (state, action) => {
-      console.log('action.payload: ', action.payload);
       state.quizzes.push(action.payload);
     })
 

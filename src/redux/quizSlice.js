@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
-import { doc, Firestore, getDocs, getFirestore, Timestamp, updateDoc, collection, query, orderBy, addDoc } from 'firebase/firestore'
+import { doc, getFirestore, Timestamp, updateDoc } from 'firebase/firestore'
 import { getAuth } from "firebase/auth";
-import { getFunctions, httpsCallable } from 'firebase/functions'
-import { getApp } from 'firebase/app'
+import * as Sentry from 'sentry-expo';
+import { Platform } from "react-native";
 
 const initialState = {
   docId: null,
@@ -27,7 +27,9 @@ const updateLastTaken = createAsyncThunk(
       return { lastTaken: lastTaken.toDate().toString()}
 
     } catch(error) {
-      console.log(error);
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -44,8 +46,11 @@ const resetProgress = createAsyncThunk(
         status: "start",
       });
       return
+
     } catch(error) {
-      console.log(error);
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -58,20 +63,19 @@ const updateProgress = createAsyncThunk(
       const quizRef = doc(getFirestore(), 'users', auth.currentUser.uid, 'quizzes', quiz.docId);
        // If lastQuestionIndex is the last index available
       const lastIndex = quiz.lastQuestionIndex >= length - 1;
-      console.log('quiz.lastQuestionIndex: ', quiz.lastQuestionIndex);
-      console.log('length: ', length);
-      console.log('lastIndex: ', lastIndex);
       
       const update = {
         lastQuestionIndex: (lastIndex ? 0 : quiz.lastQuestionIndex + 1),
         points: isCorrect ? quiz.points + 1 : quiz.points,
         status: (lastIndex ? "completed" : "inprogress")
       }
-      console.log('update: ', update);
       await updateDoc(quizRef, update);
       return { update }
+
     } catch(error) {
-      console.log(error)
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -87,10 +91,12 @@ const setDescriptors = createAsyncThunk(
         topic: descriptors.topic,
         description: descriptors.description,
       })
-  
       return { descriptors }
+
     } catch(error) {
-      console.log(error);
+      Platform.OS === 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
     }
   }
 )
@@ -104,10 +110,8 @@ export const quizSlice = createSlice({
       state = Object.assign(state, action.payload.quiz);
     },
     clearQuiz: (state) => {
-      console.log('clear');
       state = initialState
     },
-
   },
 
   extraReducers: (builder) => {
