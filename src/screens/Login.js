@@ -1,10 +1,12 @@
-import { Text, View, Image, TextInput } from 'react-native'
-import { PrimaryButton, GhostButton} from '../components'
 import React, { useState } from 'react'
+import { Text, View, Image, TextInput, Platform } from 'react-native'
+import { PrimaryButton, GhostButton} from '../components'
+import toast from '../components/Toast/Notifications'
 
 import designSystemStyles from '../assets/styles/index'
-import { getAuth, signInWithEmailAndPassword,AuthErrorCodes } from 'firebase/auth'
-import toast from '../components/Toast/Notifications'
+import { getAuth, signInWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth'
+
+import * as Sentry from 'sentry-expo';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -37,6 +39,9 @@ const Login = ({ navigation }) => {
           toast.error('Email not found. Did you type it in well?')
           break;
         default:
+          Platform.OS === 'web' 
+          ? Sentry.Browser.captureException(error)
+          : Sentry.Native.captureException(error)
           toast.error('Something went wrong. Please try again.')
           break;
       }

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Text, Touchable, View } from 'react-native'
+import React, { useState } from 'react'
+import { Text, View } from 'react-native'
 import { GhostButton, PrimaryButton } from '../components'
 import designSystemStyles from '../assets/styles'
 
@@ -8,7 +8,6 @@ import { clearQuiz, resetProgress, updateLastTaken } from '../redux/quizSlice'
 
 import toast from '../components/Toast/Notifications'
 import { deleteQuiz } from '../redux/quizzesSlice'
-import { TouchableOpacity } from 'react-native-web'
 import { clearQuestions } from '../redux/questionsSlice'
 
 const QuizPreview = ({ navigation }) => {

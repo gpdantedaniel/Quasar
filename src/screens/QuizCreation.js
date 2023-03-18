@@ -6,6 +6,8 @@ import designSystemStyles from '../assets/styles'
 import { getApp } from "firebase/app";
 import { getFunctions, httpsCallable } from "firebase/functions";
 
+import * as Sentry from 'sentry-expo';
+
 import { useDispatch } from 'react-redux'
 import { createQuiz } from '../redux/quizzesSlice'
 import { loadQuiz } from '../redux/quizSlice'
@@ -47,7 +49,9 @@ const QuizCreation = ({ navigation }) => {
       navigation.navigate('QuizPreview');
       
     } catch(error) {
-      console.log(error);
+      Platform.OS == 'web' 
+      ? Sentry.Browser.captureException(error)
+      : Sentry.Native.captureException(error)
       toast.error('Could not create quiz. Try using more concise text', {id: creationToast})
       setProcessing(false);
     }

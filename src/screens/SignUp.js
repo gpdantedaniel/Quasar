@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { Text, View, Image, TextInput } from 'react-native'
+import { Text, View, Image, TextInput, Platform } from 'react-native'
 import { PrimaryButton, GhostButton} from '../components'
 import designSystemStyles from '../assets/styles/index'
 
 import { AuthErrorCodes, createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
 import { getFirestore, doc, setDoc, Timestamp } from 'firebase/firestore'
+
+import * as Sentry from 'sentry-expo'
 
 import toast from '../components/Toast/Notifications'
 
@@ -23,7 +25,9 @@ const SignUp = ({ navigation }) => {
         email: email,
         creation: Timestamp.now(),
       }).catch((error) => {
-        console.log(error);
+        Platform.OS === 'web' 
+        ? Sentry.Browser.captureException(error)
+        : Sentry.Native.captureException(error)
       })
     }).catch((error) => {
       switch(error.code) {
@@ -37,13 +41,15 @@ const SignUp = ({ navigation }) => {
           toast.error('This email is already in use!');
           break;
         default:
+          Platform.OS === 'web' 
+          ? Sentry.Browser.captureException(error)
+          : Sentry.Native.captureException(error)
           toast.error('Something went wrong. Please try again.')
           break;
       }
     })
   }
-
-
+  
   return (
     <View style={designSystemStyles.container}>
       <View style={designSystemStyles.flexCentered}>

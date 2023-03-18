@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { useFonts } from 'expo-font';
 import designSystemStyles from './src/assets/styles/index'
@@ -15,10 +15,12 @@ import HelpAndContactScreen from './src/screens/HelpAndContact';
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, isSupported } from "firebase/analytics";
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
+
+import * as Sentry from 'sentry-expo';
 
 import { store } from './src/redux/store';
 import { Provider } from 'react-redux';
@@ -42,7 +44,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const analytics = isSupported() ? getAnalytics(app) : null;
 const functions = getFunctions(app);
 connectFunctionsEmulator(functions, 'localhost', 5001);
 
@@ -54,6 +56,12 @@ const appCheck = initializeAppCheck(app, {
   // Optional argument. If true, the SDK automatically refreshes App Check
   // tokens as needed.
   isTokenAutoRefreshEnabled: true
+});
+
+Sentry.init({
+  dsn: 'https://4497bf8e61014fc8995b2d0b45b64908@o4504855325114368.ingest.sentry.io/4504855332519936',
+  enableInExpoDevelopment: true,
+  debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
 });
 
 const Stack = createNativeStackNavigator();

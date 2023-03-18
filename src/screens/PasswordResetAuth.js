@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { Text, View, TextInput } from 'react-native'
+import { Text, View, TextInput, Platform } from 'react-native'
 import { PrimaryButton, GhostButton} from '../components'
-
 import designSystemStyles from '../assets/styles/index'
-import { AuthErrorCodes, EmailAuthProvider, getAuth, reauthenticateWithCredential, updatePassword } from 'firebase/auth'
 import Icon from 'react-native-vector-icons/Ionicons'
 import toast from '../components/Toast/Notifications'
+
+import { AuthErrorCodes, EmailAuthProvider, getAuth, reauthenticateWithCredential, updatePassword } from 'firebase/auth'
+import * as Sentry from 'sentry-expo';
 
 const PasswordResetAuth = ({ navigation }) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -29,6 +30,9 @@ const PasswordResetAuth = ({ navigation }) => {
           toast.error('Wrong password. Did you type it in well?')
           break;
         default:
+          Platform.OS == 'web' 
+          ? Sentry.Browser.captureException(error)
+          : Sentry.Native.captureException(error)
           toast.error('Something went wrong. Please try again.')
           break;
       }

@@ -1,4 +1,4 @@
-import { Text, TextInput, View } from 'react-native'
+import { Platform, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import designSystemStyles from '../assets/styles'
 import { GhostButton } from '../components'
@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { AuthErrorCodes, deleteUser, EmailAuthProvider, getAuth, reauthenticateWithCredential } from 'firebase/auth'
 import { getFunctions, httpsCallable } from 'firebase/functions'
 import { getApp } from 'firebase/app'
+
+import * as Sentry from 'sentry-expo';
 
 import { useDispatch } from 'react-redux'
 import { clearUser } from '../redux/userSlice'
@@ -38,10 +40,14 @@ const DeleteAccount = ({ navigation }) => {
           dispatch(clearQuizzes());
           dispatch(clearQuestions());
         }).catch((error) => {
-          console.log(error);
+          Platform.OS === 'web' 
+          ? Sentry.Browser.captureException(error)
+          : Sentry.Native.captureException(error)
         })
       }).catch((error) => {
-        console.log(error);
+        Platform.OS === 'web' 
+        ? Sentry.Browser.captureException(error)
+        : Sentry.Native.captureException(error)
         toast.error('Something went wrong. Please try again.')
       })
     }).catch((error) => {
@@ -50,6 +56,9 @@ const DeleteAccount = ({ navigation }) => {
           toast.error('Wrong password. Did you type it in well?')
           break;
         default:
+          Platform.OS === 'web' 
+          ? Sentry.Browser.captureException(error)
+          : Sentry.Native.captureException(error)
           toast.error('Something went wrong. Please try again.')
           break;
       }
