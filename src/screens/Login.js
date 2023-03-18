@@ -57,7 +57,7 @@ const Login = ({ navigation }) => {
             <Text style={designSystemStyles.heading}>Studying Made Easy</Text>
           </View>
             <TextInput placeholder={'Email'} style={designSystemStyles.GhostTextInput} onChangeText={(email) => setEmail(email)}/>
-            <TextInput placeholder={'Password'} style={designSystemStyles.GhostTextInput} onChangeText={(password) => setPassword(password)} secureTextEntry={true}/>
+            <TextInput autoCorrect={false} placeholder={'Password'} style={designSystemStyles.GhostTextInput} onChangeText={(password) => setPassword(password)} secureTextEntry={true}/>
             <PrimaryButton title={'Login'} onPress={() => onLogin()}/>
             <Text style={{...designSystemStyles.bodyText, textDecorationLine: 'underline'}} onPress={() => navigation.navigate('PasswordReset')}>Forgot Password?</Text>
         </View>

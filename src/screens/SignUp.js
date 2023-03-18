@@ -60,10 +60,10 @@ const SignUp = ({ navigation }) => {
             <Image style={{width: 200, height: 40}} source={require('../assets/images/quasar_logo.png')}/>
             <Text style={designSystemStyles.heading}>Create your account</Text>
           </View>
-          <TextInput style={designSystemStyles.GhostTextInput} placeholder={'First name'} onChangeText={(firstName) => setFirstName(firstName)}/>
-          <TextInput style={designSystemStyles.GhostTextInput} placeholder={'Last name'} onChangeText={(lastName) => setLastName(lastName)}/>
-          <TextInput style={designSystemStyles.GhostTextInput} placeholder={'Email'} onChangeText={(email) => setEmail(email)}/>
-          <TextInput style={designSystemStyles.GhostTextInput} placeholder={'Password'} onChangeText={(password) => setPassword(password)} secureTextEntry={true}/>
+          <TextInput style={designSystemStyles.GhostTextInput} placeholder={'First name'} onChangeText={(firstName) => setFirstName(firstName)} autoCorrect={false}/>
+          <TextInput style={designSystemStyles.GhostTextInput} placeholder={'Last name'} onChangeText={(lastName) => setLastName(lastName)} autoCorrect={false}/>
+          <TextInput style={designSystemStyles.GhostTextInput} placeholder={'Email'} onChangeText={(email) => setEmail(email)} autoCorrect={false}/>
+          <TextInput style={designSystemStyles.GhostTextInput} placeholder={'Password'} onChangeText={(password) => setPassword(password)} secureTextEntry={true} autoCorrect={false}/>
           <PrimaryButton title='Sign up' onPress={() => onSignUp()}/>
           <Text style={{...designSystemStyles.bodyText}}>By signing up, you agree to our Terms and Privacy Policy.</Text>
           <Text 

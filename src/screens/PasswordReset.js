@@ -43,7 +43,7 @@ const PasswordReset = ({ navigation }) => {
             <Image style={{width: 200, height: 40}} source={require('../assets/images/quasar_logo.png')}/>
             <Text style={designSystemStyles.heading}>Reset your password</Text>
           </View>
-          <TextInput placeholder={'Email'} style={designSystemStyles.GhostTextInput} onChangeText={(email) => setEmail(email)}/>
+          <TextInput placeholder={'Email'} style={designSystemStyles.GhostTextInput} onChangeText={(email) => setEmail(email)} autoCorrect={false}/>
           <PrimaryButton title={'Send link'} onPress={() => onReset()}/>
           <Text style={{...designSystemStyles.bodyText, textAlign: 'center', width: 300}}>
             We&#39;ll send you a link so that you may reset your password.

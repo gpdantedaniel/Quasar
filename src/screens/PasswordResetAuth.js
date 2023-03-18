@@ -56,8 +56,8 @@ const PasswordResetAuth = ({ navigation }) => {
               To change your password, you must provide your current password.
             </Text>
           </View>
-          <TextInput placeholder={'Current password'} style={designSystemStyles.GhostTextInput} onChangeText={(currentPassword) => setCurrentPassword(currentPassword)} secureTextEntry={true}/>
-          <TextInput placeholder={'New password'} style={designSystemStyles.GhostTextInput} onChangeText={(newPassword) => setNewPassword(newPassword)} secureTextEntry={true}/>
+          <TextInput placeholder={'Current password'} style={designSystemStyles.GhostTextInput} onChangeText={(currentPassword) => setCurrentPassword(currentPassword)} secureTextEntry={true} autoCorrect={false}/>
+          <TextInput placeholder={'New password'} style={designSystemStyles.GhostTextInput} onChangeText={(newPassword) => setNewPassword(newPassword)} secureTextEntry={true} autoCorrect={false}/>
           <PrimaryButton title={'Change password'} onPress={() => onChangePassword()}/>
           <Text style={{...designSystemStyles.bodyText, textAlign: 'center', textDecorationLine: 'underline'}} onPress={() => navigation.navigate('PasswordReset')}>
             Forgot password?

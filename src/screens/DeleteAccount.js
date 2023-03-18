@@ -76,7 +76,7 @@ const DeleteAccount = ({ navigation }) => {
             <Text style={designSystemStyles.headingBold}>Delete your account</Text>
             <Text style={designSystemStyles.bodyText}>To delete your account, you must provide your password</Text>
           </View>
-          <TextInput placeholder={'Password'} style={designSystemStyles.GhostTextInput} onChangeText={(password) => setPassword(password)} secureTextEntry={true}/>
+          <TextInput placeholder={'Password'} style={designSystemStyles.GhostTextInput} onChangeText={(password) => setPassword(password)} secureTextEntry={true} autoCorrect={false}/>
           <GhostButton title='Delete Account' onPress={() => onDeleteAccount()}/>
           <Text style={{...designSystemStyles.bodyText, textAlign: 'center', textDecorationLine: 'underline'}} onPress={() => navigation.navigate('PasswordReset')}>
             Forgot password?
