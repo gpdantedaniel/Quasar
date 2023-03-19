@@ -77,7 +77,7 @@ const Quizzes = ({ navigation }) => {
       <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>My Quizzes</Text>
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: 20}}>
         <View style={{gap: 10, alignItems: 'center'}}>
-          <Image source={require('../assets/images/cactus.jpg')} style={{width: 200, height: 200}}/>
+          <Image source={require('../assets/images/cactus.jpg')} style={{width: 100, height: 100}}/>
           <Text style={designSystemStyles.subHeading}>
             No quizzes around here yet...
           </Text>

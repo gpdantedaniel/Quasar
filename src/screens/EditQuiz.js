@@ -207,7 +207,7 @@ const EditQuiz = ({ navigation }) => {
         />
         : 
         <View style={{gap: 10, alignItems: 'center', justifyContent: 'center', flex: 1}}>
-          <Image source={require('../assets/images/cactus.jpg')} style={{width: 200, height: 200}}/>
+          <Image source={require('../assets/images/cactus.jpg')} style={{width: 100, height: 100}}/>
           <Text style={designSystemStyles.subHeading}>
             This quiz is empty...
           </Text>
