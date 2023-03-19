@@ -1,7 +1,7 @@
 import React from 'react'
 import { Image, Text, View, FlatList, TouchableOpacity } from 'react-native'
 import { PrimaryButton } from '../components'
-import designSystemStyles from '../assets/styles'
+import designSystemStyles, { isMobile } from '../assets/styles'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -36,7 +36,7 @@ const Quizzes = ({ navigation }) => {
               <TouchableOpacity 
                 style={designSystemStyles.listItem} 
                 onPress={() => onSelectQuiz(quizzes[parseInt(index)])}>
-                <View style={{width: '30%'}}>
+                <View style={{width: isMobile ? '90%' : '30%'}}>
                   <Text numberOfLines={1} style={designSystemStyles.bodyText}>
                     {quizzes[parseInt(index)].name}
                   </Text>
@@ -44,11 +44,13 @@ const Quizzes = ({ navigation }) => {
                     {quizzes[parseInt(index)].topic}
                   </Text>
                 </View>
+                { !isMobile ? 
                 <View style={{width: '60%'}}>
                   <Text numberOfLines={1} style={designSystemStyles.bodyText}>
                     {quizzes[parseInt(index)].description}
                   </Text>
                 </View>
+                : null }
                 <View style={{width: '10%'}}>
                   <Icon 
                     style={{alignSelf:'flex-end'}} 
@@ -61,7 +63,11 @@ const Quizzes = ({ navigation }) => {
             }
           />
         </View>
-        <PrimaryButton title='+ Create quiz' onPress={() => navigation.navigate('QuizCreation')}/>
+        <PrimaryButton 
+          title='+ Create quiz' 
+          onPress={() => navigation.navigate('QuizCreation')}
+          style={{alignSelf: isMobile ? 'center' : ''}}
+        />
       </View>
     )
   }
@@ -71,7 +77,7 @@ const Quizzes = ({ navigation }) => {
       <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>My Quizzes</Text>
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: 20}}>
         <View style={{gap: 10, alignItems: 'center'}}>
-          <Image source={require('../assets/images/desert_landscape.png')} style={{width: 300, height: 230}}/>
+          <Image source={require('../assets/images/cactus.jpg')} style={{width: 200, height: 200}}/>
           <Text style={designSystemStyles.subHeading}>
             No quizzes around here yet...
           </Text>

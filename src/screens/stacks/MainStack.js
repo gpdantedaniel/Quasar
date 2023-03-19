@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { fetchUser } from '../../redux/userSlice';
 import { useDispatch } from 'react-redux';
 import { fetchQuizzes } from '../../redux/quizzesSlice';
-import { Platform } from 'react-native';
+import { isMobile } from '../../assets/styles';
 
 const Vertical = createVerticalNavigator();
 const Tab = createBottomTabNavigator();
@@ -22,10 +22,10 @@ const MainStack = () => {
     dispatch(fetchQuizzes());
   })
 
-  if (Platform.OS == 'android' || Platform.OS == 'ios') {
+  if (isMobile) {
     return ( 
       <Tab.Navigator 
-        initialRouteName='Quizzes'
+        initialRouteName='QuizStack'
         screenOptions={{
           tabBarShowLabel: false,
           tabBarStyle: [{}, null]
@@ -35,14 +35,15 @@ const MainStack = () => {
           headerShown: false,
           tabBarIcon: () => (<Icon name="pencil" color={'black'} size={25}/>)
         }}/>
-        <Tab.Screen name="AccountStack" component={AccountStack} options={{
-          headerShown: false,
-          tabBarIcon: () => (<Icon name="person-circle-outline" color={'black'} size={25}/>)
-          }}/>
         <Tab.Screen name="HelpAndContact" component={HelpAndContactScreen} options={{
           headerShown: false,
           tabBarIcon: () => (<Icon name="mail-outline" color={'black'} size={25}/>)
         }}/>
+        <Tab.Screen name="AccountStack" component={AccountStack} options={{
+          headerShown: false,
+          tabBarIcon: () => (<Icon name="person-circle-outline" color={'black'} size={25}/>)
+        }}/>
+
       </Tab.Navigator>
     )
   }

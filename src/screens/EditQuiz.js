@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity } from 'react-native'
 import { GhostButton } from '../components'
-import designSystemStyles from '../assets/styles'
+import designSystemStyles, { isMobile } from '../assets/styles'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,6 +11,7 @@ import { resetProgress, setDescriptors } from '../redux/quizSlice'
 import toast from '../components/Toast/Notifications'
 
 import PropTypes from 'prop-types';
+import { Image } from 'react-native'
 
 const QuestionView = ({ quiz, question }) => {
   const dispatch = useDispatch();
@@ -68,33 +69,37 @@ const QuestionView = ({ quiz, question }) => {
 
   return (
     <View style={styles.questionItem}>
-      <View style={{flexDirection: 'row', gap: 20,}}>
+      <View style={{flexDirection: isMobile ? 'column' : 'row', gap: 20,}}>
         <View style={{flex: 1, gap: 20,}}>
 
-          <View style={{flexDirection: 'row', gap: 20}}>
-            <View style={{flex: 1}}>
+          <View style={{flexDirection: isMobile ? 'column' : 'row', gap: 20}}>
+            <View style={{flex: !isMobile ? 1 : ''}}>
               <Text style={designSystemStyles.bodyTextSmall}>Question</Text>
-              <TextInput style={[designSystemStyles.GhostTextInput, {minWidth: 0}]} value={questionText} onChangeText={(questionText) => {
+              <TextInput style={[designSystemStyles.GhostTextInput, {minWidth: 0}]} value={questionText} autoCorrect={false} onChangeText={(questionText) => {
                 setQuestionText(questionText); setModified(true);
               }}/>
-
             </View>
-            <View style={{flex: 1}}>
+            <View style={{flex: !isMobile ? 1 : ''}}>
               <Text style={designSystemStyles.bodyTextSmall}>Answer</Text>
-              <TextInput style={[designSystemStyles.GhostTextInput, {minWidth: 0}]} value={answer} onChangeText={(answer) => {
+              <TextInput style={[designSystemStyles.GhostTextInput, {minWidth: 0}]} value={answer} autoCorrect={false} onChangeText={(answer) => {
                 setAnswer(answer); setModified(true);
               }}/>
             </View>
           </View>
           <View style={{flex: 1}}>
-            <Text style={designSystemStyles.bodyTextSmall}>False options (Separate options using a semicolon “;”)</Text>
-            <TextInput style={[designSystemStyles.GhostTextInput, {minWidth: 0}]} value={options} onChangeText={(options) => {
+          <Text style={designSystemStyles.bodyTextSmall}>False options (Separate each with “;”)</Text>
+            <TextInput style={[designSystemStyles.GhostTextInput, {minWidth: 0}]} value={options} autoCorrect={false} onChangeText={(options) => {
               setOptions(options); setModified(true);
             }}/>
           </View>
-
         </View>
-        <View style={{justifyContent: 'space-between', alignItems: 'flex-end', width: 150,}}>
+        <View 
+        style={{
+          justifyContent: 'space-between', 
+          flexDirection: isMobile ? 'row' : 'column', 
+          alignItems: isMobile ? '' : 'flex-end', 
+          width: !isMobile ? '' : '',
+        }}>
           <TouchableOpacity onPress={() => onDelete()}>
             <Icon name={'trash-outline'} size={30} color={'black'}/>
           </TouchableOpacity>
@@ -158,9 +163,9 @@ const EditQuiz = ({ navigation }) => {
     <View style={designSystemStyles.container}>
       <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>Edit Quiz</Text>
 
-      <View style={{flexDirection: 'row', alignItems: 'flex-end', gap: 20}}>
-        <View style={{gap: 20,}}>
-          <View style={{flexDirection: 'row', gap: 20}}>
+      <View style={{flexDirection: !isMobile ? 'row' : 'column', gap: 20, alignItems: isMobile ? '' : 'flex-end'}}>
+        <View style={{gap: 20, flex: 1}}>
+          <View style={{flexDirection: !isMobile ? 'row' : 'column', gap: 20, width: isMobile ? '100%' : ''}}>
             <View>
               <Text style={designSystemStyles.bodyTextSmall}>Quiz name</Text>
               <TextInput style={designSystemStyles.GhostTextInput} value={name} onChangeText={(name) => {
@@ -176,7 +181,7 @@ const EditQuiz = ({ navigation }) => {
           </View>
           <View>
             <Text style={designSystemStyles.bodyTextSmall}>Description</Text>
-            <TextInput style={[designSystemStyles.GhostTextInput, {width: 620}]} value={description} onChangeText={(description) => {
+            <TextInput style={[designSystemStyles.GhostTextInput]} value={description} onChangeText={(description) => {
               setDescriptorsModified(true); setDescription(description)
             }}/>
           </View>
@@ -187,18 +192,32 @@ const EditQuiz = ({ navigation }) => {
           disabled={!descriptorsModified}
           onPress={() => onSaveDescriptors()}
         />
-      </View>     
-      <View style={{flex: 1, gap: 20}}>
+      </View>
+      <View style={{flex: 1, gap: 20, height: isMobile ? 500 : 0}}>
         <View style={{flexDirection: 'row', gap: 20, alignItems: 'center'}}>
           <Text style={designSystemStyles.heading}>Questions</Text>
-          <GhostButton title='+ Add Question' style={{width: 200}} onPress={() => onAddQuestion()}/>
+          <GhostButton title={isMobile ? '+ Add' : '+ Add question'} style={{width: 200}} onPress={() => onAddQuestion()}/>
         </View>
+        {questions.length > 0 
+        ?
         <FlatList
-          data={questions}
-          renderItem={({item}) => <QuestionView quiz={quiz} question={item}/> }
-          style={designSystemStyles.listView}
+        data={questions}
+        renderItem={({item}) => <QuestionView quiz={quiz} question={item}/> }
+        style={[designSystemStyles.listView]}
         />
+        : 
+        <View style={{gap: 10, alignItems: 'center', justifyContent: 'center', flex: 1}}>
+          <Image source={require('../assets/images/cactus.jpg')} style={{width: 200, height: 200}}/>
+          <Text style={designSystemStyles.subHeading}>
+            This quiz is empty...
+          </Text>
+          <Text style={designSystemStyles.subHeading}>
+            Add a question!
+          </Text>
+        </View>
+        }
       </View>
+        
       <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.navigate('QuizPreview')}/>
     </View>
   )
@@ -219,3 +238,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 })
+
+/*
+<View style={{flexDirection: 'row', gap: 20, alignItems: 'center'}}>
+  <Text style={designSystemStyles.heading}>Questions</Text>
+  { isMobile ? 
+  <TouchableOpacity>
+    <Icon name={'add-circle-outline'} color={'black'} size={30}/>
+  </TouchableOpacity>
+  : <GhostButton title={isMobile ? 'Add' : 'Add question'} style={{width: 200}} onPress={() => onAddQuestion()}/>}
+</View>
+*/

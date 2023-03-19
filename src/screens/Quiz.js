@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Text, View, FlatList, TouchableOpacity } from 'react-native'
 import { GhostButton, PrimaryButton } from '../components'
-import designSystemStyles from '../assets/styles'
+import designSystemStyles, { isMobile } from '../assets/styles'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -106,9 +106,10 @@ const Quiz = ({ navigation }) => {
   return (
     <View style={designSystemStyles.container}>
       <View>
-        <Text style={[designSystemStyles.bigHeadingBold]}>{quiz.name}</Text>
-        <Text style={[designSystemStyles.subHeading, {color: '#7c7c7c'}]}>{quiz.topic}</Text>
+        <Text numberOfLines={1} style={[designSystemStyles.bigHeadingBold]}>{quiz.name}</Text>
+        <Text numberOfLines={1} style={[designSystemStyles.subHeading, {color: '#7c7c7c'}]}>{quiz.topic}</Text>
       </View>
+      { !isMobile ? 
       <View style={{gap: 10}}>
         <Text style={designSystemStyles.bodyText}>
           Progress: {quiz.lastQuestionIndex} out of {questions.length} questions
@@ -117,6 +118,7 @@ const Quiz = ({ navigation }) => {
           <View style={[ designSystemStyles.progressFill, {width: `${progress}%`}]}/>
         </View>
       </View>
+      : null}
       <View style={designSystemStyles.separator}/>
       <View style={{flex: 1, gap: 20}}>
         <Text style={designSystemStyles.subHeading}>

@@ -1,5 +1,8 @@
-import { Platform, StyleSheet } from "react-native"
+import { Dimensions, Platform, StyleSheet } from "react-native"
 import Constants from 'expo-constants';
+
+const width = Dimensions.get('window').width;
+const isMobile = Platform.OS !== 'web' || width <= 768;
 
 const designSystemStyles = StyleSheet.create({
   bodyTextSmall: {
@@ -58,7 +61,7 @@ const designSystemStyles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     gap: 20,
-    padding: Platform.OS == 'web' ? 50 : 10,
+    padding: isMobile ? 20 : 50,
   },
   flexCentered: {
     flex: 1, 
@@ -97,8 +100,8 @@ const designSystemStyles = StyleSheet.create({
     width: '100%',
     marginTop: -10, 
     marginBottom: -10,
-    gap: 20, 
-    paddingRight: 20,
+    gap: isMobile ? 10 : 20, 
+    paddingRight: isMobile ? 0 : 20,
   },
   listItem: {
     flexDirection: 'row',
@@ -169,3 +172,4 @@ const designSystemStyles = StyleSheet.create({
 })
 
 export default designSystemStyles
+export { isMobile }

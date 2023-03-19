@@ -1,7 +1,7 @@
 import React, { useState, } from 'react'
 import { Text, View, TextInput, Platform } from 'react-native'
 import { GhostButton, PrimaryButton } from '../components'
-import designSystemStyles from '../assets/styles'
+import designSystemStyles, { isMobile } from '../assets/styles'
 
 import { getApp } from "firebase/app";
 import { getFunctions, httpsCallable } from "firebase/functions";
@@ -106,9 +106,9 @@ const QuizCreation = ({ navigation }) => {
         style={[designSystemStyles.bodyText, designSystemStyles.inputTextBox]}
         onChangeText={(input) =>  setInput(input)}
       />
-      <View style={{flexDirection: 'row', gap: 20}}>
-        <PrimaryButton title='Submit' style={{width: 200}} onPress={() => onCreateQuiz()}/>
-        <GhostButton title='Create from scratch' style={{width: 200}} onPress={() => onCreateFromScratch()}/>
+      <View style={{flexDirection: 'row', gap: isMobile ? 10 : 20}}>
+        <PrimaryButton title='Submit' style={{width: 200, flex: isMobile ? 1 : ''}} onPress={() => onCreateQuiz()}/>
+        <GhostButton title='Create from scratch' style={{width: 200, flex: isMobile ? 1 : ''}} onPress={() => onCreateFromScratch()}/>
       </View>
       <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack()}/>
     </View> 

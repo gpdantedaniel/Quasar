@@ -62,7 +62,7 @@ initializeAppCheck(app, {
 Sentry.init({
   dsn: 'https://4497bf8e61014fc8995b2d0b45b64908@o4504855325114368.ingest.sentry.io/4504855332519936',
   enableInExpoDevelopment: true,
-  debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
+  debug: false,
 });
 
 const Stack = createNativeStackNavigator();
