@@ -33,7 +33,7 @@ const designSystemStyles = StyleSheet.create({
   },
   GhostTextInput: {
     height: 40,
-    width: 300,
+    minWidth: 300,
     backgroundColor: 'rgba(0,0,0,0)',
     borderBottomColor: 'black',
     borderBottomWidth: 2,

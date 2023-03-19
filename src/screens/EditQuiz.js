@@ -68,27 +68,27 @@ const QuestionView = ({ quiz, question }) => {
 
   return (
     <View style={styles.questionItem}>
-      <View style={{flexDirection: 'row', gap: 40,}}>
+      <View style={{flexDirection: 'row', gap: 20,}}>
         <View style={{flex: 1, gap: 20,}}>
 
           <View style={{flexDirection: 'row', gap: 20}}>
-            <View>
+            <View style={{flex: 1}}>
               <Text style={designSystemStyles.bodyTextSmall}>Question</Text>
-              <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={questionText} onChangeText={(questionText) => {
+              <TextInput style={[designSystemStyles.GhostTextInput, {minWidth: 0}]} value={questionText} onChangeText={(questionText) => {
                 setQuestionText(questionText); setModified(true);
               }}/>
 
             </View>
-            <View>
+            <View style={{flex: 1}}>
               <Text style={designSystemStyles.bodyTextSmall}>Answer</Text>
-              <TextInput style={[designSystemStyles.GhostTextInput, {width: 400,}]} value={answer} onChangeText={(answer) => {
+              <TextInput style={[designSystemStyles.GhostTextInput, {minWidth: 0}]} value={answer} onChangeText={(answer) => {
                 setAnswer(answer); setModified(true);
               }}/>
             </View>
           </View>
-          <View>
+          <View style={{flex: 1}}>
             <Text style={designSystemStyles.bodyTextSmall}>False options (Separate options using a semicolon “;”)</Text>
-            <TextInput style={[designSystemStyles.GhostTextInput, {width: '100%',}]} value={options} onChangeText={(options) => {
+            <TextInput style={[designSystemStyles.GhostTextInput, {minWidth: 0}]} value={options} onChangeText={(options) => {
               setOptions(options); setModified(true);
             }}/>
           </View>

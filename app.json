@@ -27,7 +27,7 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "src/assets/images/icon_16x16.png"
     },
     "plugins": [
       "sentry-expo"
