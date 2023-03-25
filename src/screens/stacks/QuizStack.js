@@ -26,7 +26,7 @@ const QuizStack = () => {
       initialRouteName='Quizzes'
       screenOptions={{
         headerTitleStyle: designSystemStyles.subHeading,
-        headerStyle: {borderBottomColor: !isMobile ? 'black' : '#d8d8d8'}
+        headerStyle: {borderBottomColor: !isMobile ? '#fff' : '#d8d8d8'}
       }}>
       <Stack.Screen name='Quizzes' component={QuizzesScreen} options={defaultScreenOptions}/>
       <Stack.Screen name='QuizCreation' component={QuizCreationScreen} options={{title: 'Quiz Creation'}}/>
