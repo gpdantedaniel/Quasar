@@ -167,7 +167,6 @@ const Quiz = ({ navigation }) => {
           : <PrimaryButton title='Check' style={{width: 200}} onPress={() => onCheck()}/>
         }
       </View>
-      <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack()}/>
     </View>
   )
 }

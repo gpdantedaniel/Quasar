@@ -8,6 +8,7 @@ import QuizPreviewScreen from '../QuizPreview';
 import QuizScreen from '../Quiz';
 import { useDispatch, useSelector } from 'react-redux';
 import { reflectQuizUpdates } from '../../redux/quizzesSlice';
+import designSystemStyles, { isMobile } from '../../assets/styles';
 
 const Stack = createNativeStackNavigator();
 const defaultScreenOptions = {headerShown: false,  animation: 'none'};
@@ -21,12 +22,17 @@ const QuizStack = () => {
   }, [quiz])
 
   return (
-    <Stack.Navigator initialRouteName='Quizzes'>
+    <Stack.Navigator
+      initialRouteName='Quizzes'
+      screenOptions={{
+        headerTitleStyle: designSystemStyles.subHeading,
+        headerStyle: {borderBottomColor: !isMobile ? 'black' : '#d8d8d8'}
+      }}>
       <Stack.Screen name='Quizzes' component={QuizzesScreen} options={defaultScreenOptions}/>
-      <Stack.Screen name='QuizCreation' component={QuizCreationScreen} options={defaultScreenOptions}/>
-      <Stack.Screen name='EditQuiz' component={EditQuizScreen} options={defaultScreenOptions}/>
-      <Stack.Screen name='QuizPreview' component={QuizPreviewScreen} options={defaultScreenOptions}/>
-      <Stack.Screen name='Quiz' component={QuizScreen} options={defaultScreenOptions}/>
+      <Stack.Screen name='QuizCreation' component={QuizCreationScreen} options={{title: 'Quiz Creation'}}/>
+      <Stack.Screen name='EditQuiz' component={EditQuizScreen} options={{title: 'Edit Quiz'}}/>
+      <Stack.Screen name='QuizPreview' component={QuizPreviewScreen} options={{title: 'Quiz Preview'}}/>
+      <Stack.Screen name='Quiz' component={QuizScreen} options={{title: 'Quiz'}}/>
     </Stack.Navigator>
   )
 }

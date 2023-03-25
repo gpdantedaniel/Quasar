@@ -69,7 +69,7 @@ const QuestionView = ({ quiz, question }) => {
 
   return (
     <View style={styles.questionItem}>
-      <View style={{flexDirection: isMobile ? 'column' : 'row', gap: 20,}}>
+      <View style={{flexDirection: isMobile ? 'column-reverse' : 'row', gap: 20,}}>
         <View style={{flex: 1, gap: 20,}}>
 
           <View style={{flexDirection: isMobile ? 'column' : 'row', gap: 20}}>
@@ -161,8 +161,9 @@ const EditQuiz = ({ navigation }) => {
 
   return (
     <View style={designSystemStyles.container}>
+      { !isMobile ? 
       <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>Edit Quiz</Text>
-
+      : null }
       <View style={{flexDirection: !isMobile ? 'row' : 'column', gap: 20, alignItems: isMobile ? '' : 'flex-end'}}>
         <View style={{gap: 20, flex: 1}}>
           <View style={{flexDirection: !isMobile ? 'row' : 'column', gap: 20, width: isMobile ? '100%' : ''}}>
@@ -201,6 +202,7 @@ const EditQuiz = ({ navigation }) => {
         {questions.length > 0 
         ?
         <FlatList
+        horizontal={isMobile}
         data={questions}
         renderItem={({item}) => <QuestionView quiz={quiz} question={item}/> }
         style={[designSystemStyles.listView]}
@@ -217,8 +219,6 @@ const EditQuiz = ({ navigation }) => {
         </View>
         }
       </View>
-        
-      <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.navigate('QuizPreview')}/>
     </View>
   )
 }
@@ -234,8 +234,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f7f7f7',
     borderRadius: 10,
     padding: 20,
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: isMobile ? 0 : 10,
+    marginBottom: isMobile ? 0 : 10,
+    marginRight: isMobile ? 10 : 0,
+    marginLeft: isMobile ? 10 : 0,
   },
 })
 

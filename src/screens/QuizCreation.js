@@ -96,7 +96,7 @@ const QuizCreation = ({ navigation }) => {
     <View style={designSystemStyles.container}>
       <View style={{gap: 10}}>
         <Text style={[designSystemStyles.bigHeading, {fontFamily: 'Inter-Bold'}]}>Quiz Creation</Text>
-        <Text style={designSystemStyles.subHeading}>Add your text in the box below and we’ll turn it into questions!</Text>
+        <Text style={designSystemStyles.subHeading}>Add your notes in the box below and we’ll turn it into questions!</Text>
       </View>
       <TextInput
         editable
@@ -110,7 +110,6 @@ const QuizCreation = ({ navigation }) => {
         <PrimaryButton title='Submit' style={{width: 200, flex: isMobile ? 1 : ''}} onPress={() => onCreateQuiz()}/>
         <GhostButton title='Create from scratch' style={{width: 200, flex: isMobile ? 1 : ''}} onPress={() => onCreateFromScratch()}/>
       </View>
-      <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.goBack()}/>
     </View> 
   )
 }

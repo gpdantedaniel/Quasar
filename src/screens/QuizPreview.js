@@ -129,7 +129,6 @@ const QuizPreview = ({ navigation }) => {
         
         
       </View>
-      <GhostButton title='<- Back' style={{width: 200}} onPress={() => navigation.navigate('Quizzes')}/>
     </View>
   )
 }
