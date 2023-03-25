@@ -124,7 +124,7 @@ QuestionView.propTypes = {
   question: PropTypes.object.isRequired,
 }
 
-const EditQuiz = ({ navigation }) => {
+const EditQuiz = () => {
   const dispatch = useDispatch();
   const quiz = useSelector((state) => state.quiz);
   const questions =  useSelector((state) => state.questions.questions);
@@ -223,9 +223,7 @@ const EditQuiz = ({ navigation }) => {
   )
 }
 
-EditQuiz.propTypes = {
-  navigation: PropTypes.object.isRequired,
-}
+EditQuiz.propTypes = {}
 
 export default EditQuiz
 
